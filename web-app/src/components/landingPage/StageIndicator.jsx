@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, useTransform, useSpring } from 'framer-motion';
 
-const StageItem = ({ stage, i, total, scrollProgress }) => {
+const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
   const center = i / (total - 1);
   const start = Math.max(0, center - 0.1);
   const end = Math.min(1, center + 0.1);
@@ -18,13 +18,19 @@ const StageItem = ({ stage, i, total, scrollProgress }) => {
   ]);
 
   return (
-    <motion.span style={{ opacity, color }} className="text-[10px] font-bold tracking-widest uppercase">
+    <motion.button 
+      onClick={() => onClick(i)}
+      style={{ opacity, color }} 
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      className="text-[10px] font-bold tracking-widest uppercase bg-transparent border-none cursor-pointer outline-none transition-colors hover:text-primary"
+    >
       {stage}
-    </motion.span>
+    </motion.button>
   );
 };
 
-const StageIndicator = ({ scrollYProgress }) => {
+const StageIndicator = ({ scrollYProgress, onStageClick }) => {
   const stages = ['Intro', 'Discovery', 'Mobile', 'Mission'];
 
   // Refined width calculation: spring the numeric value, then convert to %
@@ -33,7 +39,7 @@ const StageIndicator = ({ scrollYProgress }) => {
   const width = useTransform(springWidth, (val) => `${val}%`);
 
   return (
-    <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-8">
+    <div className="fixed bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[90vw] md:max-w-2xl px-4 md:px-8">
       <div className="relative h-1.5 bg-surface-container rounded-full overflow-hidden backdrop-blur-md border border-outline/10">
         <motion.div
           className="absolute h-full bg-gradient-to-r from-primary-container via-primary to-secondary-container shadow-[0_0_15px_rgba(193,53,132,0.5)]"
@@ -48,6 +54,7 @@ const StageIndicator = ({ scrollYProgress }) => {
             i={i}
             total={stages.length}
             scrollProgress={scrollYProgress}
+            onClick={onStageClick}
           />
         ))}
       </div>

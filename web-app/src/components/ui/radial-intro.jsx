@@ -20,7 +20,9 @@ function RadialIntro({
   orbitItems,
   stageSize = 320,
   imageSize = 60,
-  onItemClick
+  onItemClick,
+  onItemHover,
+  onItemHoverEnd
 }) {
   const step = 360 / orbitItems.length;
   const [scope, animate] = useAnimate();
@@ -35,7 +37,7 @@ function RadialIntro({
 
     // image lift-in
     const liftInTimeout = setTimeout(() => {
-      animate(imgs, { top: 0 }, transition);
+      animate(imgs, { top: "12%" }, transition);
     }, 250);
 
     // build sequence for orbit placement
@@ -95,19 +97,22 @@ function RadialIntro({
         {orbitItems.map((item, i) => {
           const isIcon = typeof item.src !== 'string';
           const Content = isIcon ? item.src : 'img';
-          
+
           return (
             <motion.div
               key={item.id}
               data-arm
-              className="absolute inset-0"
+              className="absolute inset-0 pointer-events-none"
               style={{ zIndex: orbitItems.length - i }}
               data-angle={i * step}
             >
-              <motion.div
+              <motion.button
                 data-arm-image
                 onClick={() => onItemClick?.(item)}
-                className="rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-4 hover:ring-primary/20 transition-all active:scale-90"
+                onMouseEnter={() => onItemHover?.(item)}
+                onMouseLeave={() => onItemHoverEnd?.(item)}
+                whileHover={{ scale: 1.15, rotate: 0 }}
+                className="rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-4 hover:ring-primary/20 transition-all active:scale-95 pointer-events-auto"
                 style={{
                   width: imageSize,
                   height: imageSize,
@@ -121,14 +126,14 @@ function RadialIntro({
                 {isIcon ? (
                   <Content className="w-full h-full text-primary" />
                 ) : (
-                  <img 
-                    src={item.src} 
-                    alt={item.name} 
-                    className="w-full h-full object-contain" 
-                    draggable={false} 
+                  <img
+                    src={item.src}
+                    alt={item.name}
+                    className="w-full h-full object-contain"
+                    draggable={false}
                   />
                 )}
-              </motion.div>
+              </motion.button>
             </motion.div>
           );
         })}
