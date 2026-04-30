@@ -23,9 +23,9 @@ export default function IntroScreen() {
           useNativeDriver: true,
         }).start();
 
-        // Stay on intro for 2.5 seconds then navigate
+        // Stay on intro for 2.5 seconds then navigate to login
         setTimeout(() => {
-          router.replace('/(tabs)');
+          router.replace('/login');
         }, 2500);
       } catch (e) {
         console.warn(e);

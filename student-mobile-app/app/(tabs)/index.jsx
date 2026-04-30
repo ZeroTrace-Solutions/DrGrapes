@@ -167,7 +167,7 @@ function BestsellerCard({ image, title, desc, price }) {
         <Text className="body-sm text-on-surface-variant mb-md" numberOfLines={1}>{desc}</Text>
         <View className="flex-row justify-between items-center">
           <Text className="body-md font-bold text-on-surface">{price}</Text>
-          <StyledPressable className="bg-primary-container p-xs rounded-full active:scale-90">
+          <StyledPressable className="bg-primary-container p-xs rounded-full">
             <Ionicons name="cart" size={16} color="white" />
           </StyledPressable>
         </View>
