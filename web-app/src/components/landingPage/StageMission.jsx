@@ -39,9 +39,9 @@ const StageMission = ({ scrollXProgress }) => {
   const xRight = useTransform(localProgress, [0.2, 0.4], [50, 0]);
 
   const socialLinks = [
-    { icon: InstagramIcon, label: t('mission.socials.instagram'), href: "#" },
+    { icon: InstagramIcon, label: t('mission.socials.instagram'), href: "https://www.instagram.com/drgrapes_?utm_source=qr&igsh=YTVpNnJsMXA2bHRm" },
     { icon: FacebookIcon, label: t('mission.socials.facebook'), href: "#" },
-    { icon: Mail, label: t('mission.socials.email'), href: "mailto:support@drgrapes.com" },
+    { icon: Mail, label: t('mission.socials.email'), href: "mailto:drgrapes88@gmail.com" },
   ];
 
   const legalItems = [

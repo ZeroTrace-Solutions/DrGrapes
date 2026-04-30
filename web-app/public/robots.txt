@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://drgrapes.com/sitemap.xml
+Sitemap: https://dr-grapes.ztsolutions.tech/sitemap.xml
