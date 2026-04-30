@@ -71,7 +71,7 @@ const StageIntro = ({ scrollXProgress, onNavigate }) => {
                   description: t('intro.shopToastDesc'),
                   duration: 4000
                 })}
-                className="rounded-full px-8 py-6 md:px-12 md:py-10 text-lg md:text-2xl font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 h-auto bg-primary text-white hover:bg-primary/90 border-none w-full md:w-auto"
+                className="rounded-full px-8 py-6 md:px-12 md:py-10 text-lg md:text-2xl font-black uppercase tracking-widest shadow-2xl transition-all hover:scale-105 active:scale-95 h-auto bg-primary text-on-primary hover:bg-primary/90 border-none w-full md:w-auto"
               >
                 {t('intro.shopNow')}
               </Button>

@@ -97,7 +97,7 @@ const StageMission = ({ scrollXProgress }) => {
               opacity: useTransform(localProgress, [0.2, 0.3], [0, 1]),
               y: useTransform(localProgress, [0.2, 0.3], [-10, 0])
             }}
-            className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-primary/60"
+            className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-primary/90"
           >
             {t('mission.connect')}
           </motion.h4>
@@ -106,12 +106,13 @@ const StageMission = ({ scrollXProgress }) => {
               <motion.a
                 key={i}
                 href={link.href}
+                aria-label={link.label}
                 style={{
                   opacity: useTransform(localProgress, [0.2 + (i * 0.05), 0.35 + (i * 0.05)], [0, 1]),
                   scale: useTransform(localProgress, [0.2 + (i * 0.05), 0.35 + (i * 0.05)], [0.8, 1])
                 }}
                 whileHover={{ scale: 1.05, x: 10, color: "var(--primary)" }}
-                className="flex items-center gap-4 p-3 md:p-4 rounded-xl md:rounded-3xl bg-white/5 border border-white/5 text-on-surface/60 transition-all hover:bg-primary/5 w-auto lg:w-full"
+                className="flex items-center gap-4 p-3 md:p-4 rounded-xl md:rounded-3xl bg-white/5 border border-white/5 text-on-surface/80 transition-all hover:bg-primary/5 w-auto lg:w-full"
               >
                 <link.icon className="w-5 h-5 md:w-6 md:h-6" />
                 <span className="hidden lg:block text-sm font-bold uppercase tracking-widest">{link.label}</span>
@@ -136,13 +137,17 @@ const StageMission = ({ scrollXProgress }) => {
                 scale: useTransform(localProgress, [0.4, 0.5], [0.9, 1])
               }}
               dir='ltr'
-              className="flex items-center gap-3 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer"
+              role="button"
+              aria-label={`Visit ZeroTrace Solutions portal`}
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && window.open('https://portal.ztsolutions.tech', '_blank')}
+              className="flex items-center gap-3 grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer"
               onClick={() => window.open('https://portal.ztsolutions.tech', '_blank')}
             >
               <img src={ztLogo} alt="ZeroTrace Solutions" className="w-6 h-6 md:w-8 md:h-8 object-contain" />
               <div className="flex flex-col">
                 <span className="text-[10px] md:text-xs font-black tracking-tighter uppercase leading-none">ZT</span>
-                <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase leading-none opacity-50">Solutions</span>
+                <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase leading-none opacity-60">Solutions</span>
               </div>
             </motion.div>
           </div>
@@ -155,7 +160,7 @@ const StageMission = ({ scrollXProgress }) => {
               opacity: useTransform(localProgress, [0.3, 0.4], [0, 1]),
               y: useTransform(localProgress, [0.3, 0.4], [-10, 0])
             }}
-            className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-secondary/60"
+            className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-secondary/90"
           >
             {t('mission.legal')}
           </motion.h4>
@@ -169,7 +174,8 @@ const StageMission = ({ scrollXProgress }) => {
                 }}
                 whileHover={{ scale: 1.05, x: 10, color: "var(--secondary)" }}
                 onClick={() => navigate(item.id === 'terms' ? '/terms' : '/privacy')}
-                className="w-auto lg:w-full text-start px-4 py-2 md:p-4 rounded-full md:rounded-3xl bg-white/5 border border-white/5 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] text-white/40 hover:bg-secondary/5"
+                aria-label={`View ${item.label}`}
+                className="w-auto lg:w-full text-start px-4 py-2 md:p-4 rounded-full md:rounded-3xl bg-white/5 border border-white/5 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] text-white/80 hover:bg-secondary/5"
               >
                 {item.label}
               </motion.button>
@@ -197,13 +203,17 @@ const StageMission = ({ scrollXProgress }) => {
                 opacity: useTransform(localProgress, [0.4, 0.5], [0, 1]),
                 scale: useTransform(localProgress, [0.4, 0.5], [0.9, 1])
               }}
-              className="flex items-center gap-3 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer"
+              role="button"
+              aria-label={`Visit ZeroTrace Solutions portal`}
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && window.open('https://portal.ztsolutions.tech', '_blank')}
+              className="flex items-center gap-3 grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer"
               onClick={() => window.open('https://portal.ztsolutions.tech', '_blank')}
             >
               <img src={ztLogo} alt="ZeroTrace Solutions" className="w-6 h-6 md:w-8 md:h-8 object-contain" />
               <div className="flex flex-col">
                 <span className="text-[10px] md:text-xs font-black tracking-tighter uppercase leading-none">ZT</span>
-                <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase leading-none opacity-50">Solutions</span>
+                <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase leading-none opacity-60">Solutions</span>
               </div>
             </motion.div>
           </div>

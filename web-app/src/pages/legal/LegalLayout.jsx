@@ -9,8 +9,15 @@ const LegalLayout = ({ children, title, lastUpdated, type }) => {
   const isRTL = i18n.language === 'ar';
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    document.documentElement.classList.add('show-scrollbar');
+    return () => {
+      document.documentElement.classList.remove('show-scrollbar');
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Background Decor */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full" />

@@ -25,7 +25,7 @@ const DiscoveryCard = ({ feat, i, scrollXProgress }) => {
         </div>
         <div className="space-y-2">
           <h3 className="text-2xl font-black tracking-tight leading-tight">{feat.title}</h3>
-          <p className="text-on-surface-variant text-sm leading-relaxed opacity-70 group-hover:opacity-100 transition-opacity">
+          <p className="text-on-surface-variant text-sm leading-relaxed opacity-90 group-hover:opacity-100 transition-opacity">
             {feat.desc}
           </p>
         </div>
@@ -68,7 +68,7 @@ const DiscoveryMobileList = ({ features }) => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-black tracking-tight leading-tight">{feat.title}</h3>
-                <p className="text-on-surface-variant text-xs leading-relaxed opacity-70">
+                <p className="text-on-surface-variant text-xs leading-relaxed opacity-90">
                   {feat.desc}
                 </p>
               </div>

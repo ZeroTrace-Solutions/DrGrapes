@@ -177,10 +177,33 @@ html[lang="ar"], html[lang="ar"] * {
     display: none;
   }
 
+  .show-scrollbar {
+    scrollbar-width: auto !important;
+    -ms-overflow-style: auto !important;
+  }
+
+  .show-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    width: 8px;
+  }
+
+  .show-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .show-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--surface-container-highest);
+    border-radius: 10px;
+  }
+
+  .show-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
   }
 

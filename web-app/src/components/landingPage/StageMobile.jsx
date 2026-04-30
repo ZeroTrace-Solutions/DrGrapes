@@ -84,6 +84,8 @@ const StageMobile = ({ scrollXProgress }) => {
             <motion.div
               style={{ scale: phoneScale, rotate: phoneRotate }}
               className="z-20 cursor-pointer"
+              role="img"
+              aria-label="Interactive mobile phone showing Dr. Grapes app home screen"
             >
               <MobileFrame width={isMobile ? "240px" : "320px"} height={isMobile ? "480px" : "640px"}>
                 <img src={home} className="absolute inset-0 w-full h-full object-cover opacity-90" alt="" />
@@ -127,13 +129,16 @@ const StageMobile = ({ scrollXProgress }) => {
             </motion.h2>
           </div>
 
-          <motion.p style={{ opacity: textOpacity, x: textX, y: textY }} className="text-on-surface-variant text-start text-sm md:text-xl leading-relaxed max-w-lg">
+          <motion.p style={{ opacity: textOpacity, x: textX, y: textY }} className="text-on-surface-variant text-start text-sm md:text-xl leading-relaxed max-w-lg opacity-90">
             {t('mobile.description')}
           </motion.p>
 
           <motion.div style={{ opacity: buttonsOpacity, y: buttonsY }} className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 pt-2 md:pt-8 w-full sm:w-auto px-4 md:px-0">
             <div className="relative group w-full sm:w-auto">
-              <motion.button className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-primary-container/10 text-primary rounded-[20px] md:rounded-[24px] font-bold flex items-center justify-center gap-3 md:gap-4 border border-primary/20 opacity-80 cursor-not-allowed">
+              <motion.button 
+                aria-label={`Download Dr. Grapes on the Apple App Store - ${t('intro.comingSoon')}`}
+                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-primary-container/10 text-primary rounded-[20px] md:rounded-[24px] font-bold flex items-center justify-center gap-3 md:gap-4 border border-primary/20 opacity-80 cursor-not-allowed"
+              >
                 <img src={appleImg} className="w-6 h-6 md:w-8 md:h-8 object-contain" alt="Apple" />
                 <div className="text-left">
                   <div className="text-[8px] md:text-[10px] font-normal leading-none opacity-60 uppercase">Download on the</div>
@@ -143,7 +148,10 @@ const StageMobile = ({ scrollXProgress }) => {
               <div className="absolute -top-2 -right-2 bg-primary-container text-on-primary text-[8px] font-black uppercase px-3 py-1 rounded-full shadow-lg border border-primary/20 whitespace-nowrap">{t('intro.comingSoon')}</div>
             </div>
             <div className="relative group w-full sm:w-auto">
-              <motion.button className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-secondary-container/10 text-secondary rounded-[20px] md:rounded-[24px] font-bold flex items-center justify-center gap-3 md:gap-4 border border-secondary/20 opacity-80 cursor-not-allowed">
+              <motion.button 
+                aria-label={`Get Dr. Grapes on Google Play - ${t('intro.comingSoon')}`}
+                className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 bg-secondary-container/10 text-secondary rounded-[20px] md:rounded-[24px] font-bold flex items-center justify-center gap-3 md:gap-4 border border-secondary/20 opacity-80 cursor-not-allowed"
+              >
                 <img src={googlePlayImg} className="w-6 h-6 md:w-8 md:h-8 object-contain" alt="Google Play" />
                 <div className="text-left">
                   <div className="text-[8px] md:text-[10px] font-normal leading-none opacity-60 uppercase">GET IT ON</div>

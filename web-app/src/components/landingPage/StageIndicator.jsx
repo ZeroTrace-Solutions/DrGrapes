@@ -24,6 +24,7 @@ const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
       style={{ opacity, color }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
+      aria-label={`Go to ${stage}`}
       className="text-[10px] font-bold tracking-widest uppercase bg-transparent border-none cursor-pointer outline-none transition-colors hover:text-primary"
     >
       {stage}

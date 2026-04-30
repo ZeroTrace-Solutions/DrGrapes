@@ -59,7 +59,10 @@ const StageGear = ({ containerRef }) => {
                   <p className="text-primary font-black text-3xl tracking-tighter drop-shadow-sm">${product.price}</p>
                 </div>
                 <img src={product.img} className="w-full h-48 object-contain my-8 drop-shadow-2xl transition-transform group-hover:scale-110 duration-500" alt="" />
-                <button className="w-full py-4 bg-primary-container text-on-primary hover:bg-primary rounded-2xl transition-all font-black flex items-center justify-center gap-2 shadow-lg shadow-primary-container/20">
+                <button 
+                  aria-label={t('gear.viewGear')}
+                  className="w-full py-4 bg-primary-container text-on-primary-container hover:bg-primary rounded-2xl transition-all font-black flex items-center justify-center gap-2 shadow-lg shadow-primary-container/20"
+                >
                   {t('gear.viewGear')} <Plus className="w-4 h-4" />
                 </button>
               </div>

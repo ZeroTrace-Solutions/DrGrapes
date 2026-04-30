@@ -88,7 +88,7 @@ const FloatingIcons = ({ onNavigate }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2 }}
-            className="absolute bottom-4 right-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/40 whitespace-nowrap flex flex-col items-end"
+            className="absolute bottom-4 right-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/60 whitespace-nowrap flex flex-col items-end"
           >
             <motion.span
               key={hoveredName || 'default'}
@@ -113,6 +113,7 @@ const FloatingIcons = ({ onNavigate }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => i18n.changeLanguage(i18n.language.startsWith('en') ? 'ar' : 'en')}
+          aria-label={i18n.language.startsWith('en') ? 'Switch to Arabic' : 'Switch to English'}
           className="w-14 h-14 rounded-full glass flex flex-col items-center justify-center shadow-[0_0_30px_rgba(255,175,210,0.2)] border border-primary/30 text-primary active:bg-primary/10 transition-colors"
         >
           <Languages className="w-5 h-5 mb-0.5" />
