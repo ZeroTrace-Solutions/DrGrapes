@@ -108,6 +108,7 @@ function RadialIntro({
             >
               <motion.button
                 data-arm-image
+                aria-label={item.name}
                 onClick={() => onItemClick?.(item)}
                 onMouseEnter={() => onItemHover?.(item)}
                 onMouseLeave={() => onItemHoverEnd?.(item)}

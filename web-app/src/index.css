@@ -64,14 +64,14 @@ html[lang="ar"], html[lang="ar"] * {
 
   /* Brand Colors */
   --primary: #ffafd2;
-  --on-primary: #63003f;
+  --on-primary: #4d0031;
   --primary-container: #c13584;
   --on-primary-container: #ffedf2;
 
   --secondary: #bac3ff;
   --on-secondary: #00218d;
   --secondary-container: #0d36c3;
-  --on-secondary-container: #a7b4ff;
+  --on-secondary-container: #d6dbff;
 
   --tertiary: #c8c6c5;
   --on-tertiary: #303030;

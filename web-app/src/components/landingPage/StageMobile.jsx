@@ -145,7 +145,7 @@ const StageMobile = ({ scrollXProgress }) => {
                   <div className="text-base md:text-lg font-bold leading-none mt-1">{t('mobile.appStore')}</div>
                 </div>
               </motion.button>
-              <div className="absolute -top-2 -right-2 bg-primary-container text-on-primary text-[8px] font-black uppercase px-3 py-1 rounded-full shadow-lg border border-primary/20 whitespace-nowrap">{t('intro.comingSoon')}</div>
+              <div className="absolute -top-2 -right-2 bg-primary-container text-on-primary-container text-[8px] font-black uppercase px-3 py-1 rounded-full shadow-lg border border-primary/20 whitespace-nowrap">{t('intro.comingSoon')}</div>
             </div>
             <div className="relative group w-full sm:w-auto">
               <motion.button 
@@ -158,7 +158,7 @@ const StageMobile = ({ scrollXProgress }) => {
                   <div className="text-base md:text-lg font-bold leading-none mt-1">{t('mobile.googlePlay')}</div>
                 </div>
               </motion.button>
-              <div className="absolute -top-2 -right-2 bg-secondary-container text-on-secondary text-[8px] font-black uppercase px-3 py-1 rounded-full shadow-lg border border-secondary/20 whitespace-nowrap">{t('intro.comingSoon')}</div>
+              <div className="absolute -top-2 -right-2 bg-secondary-container text-on-secondary-container text-[8px] font-black uppercase px-3 py-1 rounded-full shadow-lg border border-secondary/20 whitespace-nowrap">{t('intro.comingSoon')}</div>
             </div>
           </motion.div>
         </div>

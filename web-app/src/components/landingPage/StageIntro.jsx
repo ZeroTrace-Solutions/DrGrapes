@@ -84,7 +84,7 @@ const StageIntro = ({ scrollXProgress, onNavigate }) => {
                 >
                   {t('intro.downloadApp')}
                 </Button>
-                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 bg-secondary-container text-on-secondary text-[8px] md:text-[10px] font-black uppercase px-3 py-1 md:px-4 md:py-1.5 rounded-full shadow-lg z-10">{t('intro.comingSoon')}</div>
+                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 bg-secondary-container text-on-secondary-container text-[8px] md:text-[10px] font-black uppercase px-3 py-1 md:px-4 md:py-1.5 rounded-full shadow-lg z-10">{t('intro.comingSoon')}</div>
               </div>
             </div>
           </motion.div>
