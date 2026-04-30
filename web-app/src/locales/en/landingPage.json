@@ -90,5 +90,18 @@
       "atlas": "Anatomy Atlas",
       "kit": "Diagnostic Kit"
     }
+  },
+  "seo": {
+    "landing": {
+      "title": "Dr. Grapes | The Ultimate Medical Student Companion",
+      "description": "Dr. Grapes is the ultimate medical student companion, providing Q-Banks, medical equipment, and a global community to excel in your medical journey.",
+      "keywords": "medical students, medical education, Q-Bank, medical equipment, stethoscope, medical community, USMLE, PLAB"
+    },
+    "terms": {
+      "description": "Read the Terms of Service for Dr. Grapes."
+    },
+    "privacy": {
+      "description": "Read the Privacy Policy for Dr. Grapes."
+    }
   }
 }

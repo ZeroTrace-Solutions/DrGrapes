@@ -1,17 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import LegalLayout from './LegalLayout';
+import SEO from '@/components/SEO';
 
 const PrivacyPolicy = () => {
-  const { t } = useTranslation('legal');
+  const { t } = useTranslation(['legal', 'landingPage']);
   const content = t('privacy', { returnObjects: true });
 
   return (
-    <LegalLayout 
-      title={content.title} 
-      lastUpdated={content.lastUpdated} 
-      type="privacy"
-    >
+    <>
+      <SEO 
+        title={content.title}
+        description={t('seo.privacy.description', 'Privacy Policy for Dr. Grapes application.')}
+        canonicalUrl="/privacy"
+      />
+      <LegalLayout 
+        title={content.title} 
+        lastUpdated={content.lastUpdated} 
+        type="privacy"
+      >
       <div className="space-y-16">
         {Object.entries(content.sections).map(([key, section]) => (
           <section key={key} className="group">
@@ -30,6 +37,7 @@ const PrivacyPolicy = () => {
         ))}
       </div>
     </LegalLayout>
+    </>
   );
 };
 

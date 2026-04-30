@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 // Components
+import SEO from '@/components/SEO';
 import FloatingIcons from '@/components/landingPage/FloatingIcons';
 import StageIndicator from '@/components/landingPage/StageIndicator';
 import StageIntro from '@/components/landingPage/StageIntro';
@@ -12,7 +13,7 @@ import StageMission from '@/components/landingPage/StageMission';
 import { AnimatePresence } from 'framer-motion';
 
 const LandingPage = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
   const scrollRef = useRef(null);
@@ -109,6 +110,11 @@ const LandingPage = () => {
       dir={isRTL ? 'rtl' : 'ltr'}
       className="relative bg-background text-on-surface overflow-hidden font-sans selection:bg-primary/30 h-screen w-screen touch-none"
     >
+      <SEO 
+        title={t('seo.landing.title', 'Home')}
+        description={t('seo.landing.description', 'Welcome to Dr. Grapes - The ultimate medical student companion.')}
+        keywords={t('seo.landing.keywords', 'medical students, dr grapes, medical tools, medical education')}
+      />
       {/* Global Background Layer */}
       <div className="fixed inset-0 bg-[#0c0f0f] z-[-10]" />
 

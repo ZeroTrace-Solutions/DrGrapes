@@ -1,17 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import LegalLayout from './LegalLayout';
+import SEO from '@/components/SEO';
 
 const TermsOfService = () => {
-  const { t } = useTranslation('legal');
+  const { t } = useTranslation(['legal', 'landingPage']);
   const content = t('tos', { returnObjects: true });
 
   return (
-    <LegalLayout 
-      title={content.title} 
-      lastUpdated={content.lastUpdated} 
-      type="tos"
-    >
+    <>
+      <SEO 
+        title={content.title}
+        description={t('seo.terms.description', 'Terms of Service for Dr. Grapes application.')}
+        canonicalUrl="/terms"
+      />
+      <LegalLayout 
+        title={content.title} 
+        lastUpdated={content.lastUpdated} 
+        type="tos"
+      >
       <div className="space-y-16">
         {Object.entries(content.sections).map(([key, section]) => (
           <section key={key} className="group">
@@ -30,6 +37,7 @@ const TermsOfService = () => {
         ))}
       </div>
     </LegalLayout>
+    </>
   );
 };
 
