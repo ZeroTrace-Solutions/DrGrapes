@@ -7,14 +7,22 @@ import { AnimatePresence } from 'framer-motion'
 import { Toaster } from '@/components/ui/sonner'
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('hasLoaded');
+    }
+    return true;
+  });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000); // Duration matches preloader animation
-    return () => clearTimeout(timer);
-  }, []);
+    if (loading) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        sessionStorage.setItem('hasLoaded', 'true');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   return (
     <SmoothScroll>

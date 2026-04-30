@@ -22,32 +22,44 @@ const StageIntro = ({ scrollYProgress, onNavigate }) => {
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="absolute inset-0 z-[100] flex flex-col justify-center items-center space-y-20 text-center"
+          className="absolute inset-0 z-[100] flex flex-col justify-center items-center space-y-10 md:space-y-20 text-center px-6"
         >
+          {/* LOGO - Mobile Only */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="md:hidden w-20 h-20 mb-2"
+          >
+            <img src={logo} alt="Dr. Grapes" className="w-full h-full object-contain" />
+          </motion.div>
+
           {/* SLOGAN */}
           <motion.div
             style={{ opacity: sloganScrollOpacity, y: sloganY }}
-            className="space-y-8"
+            className="space-y-4 md:space-y-8 w-full max-w-lg md:max-w-4xl"
           >
-            <BlurText
-              text="Your Guide For Your"
-              delay={150}
-              animateBy="words"
-              direction="top"
-              className="text-4xl md:text-7xl font-black leading-tight tracking-tighter uppercase max-w-4xl"
-            />
-            <h2 className="text-4xl md:text-7xl font-black leading-tight tracking-tighter uppercase max-w-4xl">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-container to-secondary">Medical Journey</span>
-            </h2>
-            <div className="w-16 md:w-24 h-1 md:h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full shadow-lg mx-auto" />
+            <div className="space-y-2">
+              <BlurText
+                text="Your Guide For Your"
+                delay={150}
+                animateBy="words"
+                direction="top"
+                className="text-2xl md:text-7xl font-black leading-tight tracking-tighter uppercase"
+              />
+              <h2 className="text-4xl md:text-7xl font-black leading-[0.9] tracking-tighter uppercase">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-container to-secondary">Medical Journey</span>
+              </h2>
+            </div>
+            <div className="w-10 md:w-24 h-1 md:h-1.5 bg-gradient-to-r from-primary to-secondary rounded-full shadow-lg mx-auto opacity-50" />
           </motion.div>
 
           {/* CTA */}
           <motion.div
             style={{ opacity: ctaScrollOpacity, scale: ctaScale }}
-            className="space-y-8 md:space-y-12"
+            className="space-y-6 md:space-y-12 w-full max-w-sm md:max-w-none"
           >
-            <div className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center items-center">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-8 justify-center items-center w-full">
               <Button
                 size="lg"
                 onClick={() => toast.info("Marketplace Coming Soon", {

@@ -125,12 +125,12 @@ const ScrollStack = forwardRef(({
             }
 
             let translateY = 0;
-            const isPinned = scrollTop >= pinStart && scrollTop <= pinEnd;
+            // The card is "pinned" if we are past its pin start
+            const isPinned = scrollTop >= pinStart;
 
             if (isPinned) {
+                // Keep it pinned at its stacked position relative to the viewport
                 translateY = scrollTop - cardTop + stackPositionPx + itemStackDistance * i;
-            } else if (scrollTop > pinEnd) {
-                translateY = pinEnd - cardTop + stackPositionPx + itemStackDistance * i;
             }
 
             const newTransform = {
@@ -159,11 +159,11 @@ const ScrollStack = forwardRef(({
             }
 
             if (i === cardsRef.current.length - 1) {
-                const isInView = scrollTop >= pinStart && scrollTop <= pinEnd;
-                if (isInView && !stackCompletedRef.current) {
+                const isPastStart = scrollTop >= pinStart;
+                if (isPastStart && !stackCompletedRef.current) {
                     stackCompletedRef.current = true;
                     onStackComplete?.();
-                } else if (!isInView && stackCompletedRef.current) {
+                } else if (!isPastStart && stackCompletedRef.current) {
                     stackCompletedRef.current = false;
                 }
             }
@@ -330,10 +330,10 @@ const ScrollStack = forwardRef(({
 
     return (
         <div className={containerClassName} ref={scrollerRef} style={containerStyles}>
-            <div className="scroll-stack-inner pt-[10vh] px-4 md:px-20 pb-[50rem] min-h-screen">
+            <div className="scroll-stack-inner pt-[10vh] px-4 md:px-20 pb-[10vh] min-h-screen">
                 {children}
-                {/* Spacer so the last pin can release cleanly */}
-                <div className="scroll-stack-end w-full h-px" />
+                {/* Minimal spacer to ensure we can reach the end of the stack */}
+                <div className="scroll-stack-end w-full h-4" />
             </div>
         </div>
     );

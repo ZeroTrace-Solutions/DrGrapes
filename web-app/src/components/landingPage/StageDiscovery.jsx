@@ -41,29 +41,52 @@ const DiscoveryCard = ({ feat, i, scrollXProgress }) => {
   );
 };
 
-const StageDiscovery = ({ containerRef, setIsLocked, lockRef, isPageLocked }) => {
+const DiscoveryMobileList = ({ features }) => {
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      <motion.div
+        animate={{
+          y: ["0%", "-50%"]
+        }}
+        transition={{
+          duration: 20,
+          ease: "linear",
+          repeat: Infinity
+        }}
+        className="flex flex-col gap-6 py-4"
+      >
+        {/* Duplicate the list to create a seamless infinite loop */}
+        {[...features, ...features].map((feat, i) => (
+          <div
+            key={i}
+            className={`relative overflow-hidden rounded-[32px] border border-outline-variant/20 p-8 flex flex-col justify-between bg-surface-container ${feat.accent.replace('bg-', 'border-')}/10 shadow-sm`}
+          >
+            <div className="space-y-4 relative z-10">
+              <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center border shadow-lg ${feat.iconBg}`}>
+                <feat.icon className="w-6 h-6" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-black tracking-tight leading-tight">{feat.title}</h3>
+                <p className="text-on-surface-variant text-xs leading-relaxed opacity-70">
+                  {feat.desc}
+                </p>
+              </div>
+            </div>
+            <div className={`absolute -right-16 -bottom-16 w-48 h-48 blur-[60px] rounded-full opacity-5 ${feat.accent}`} />
+          </div>
+        ))}
+      </motion.div>
+      
+      {/* VIGNETTE SHADOWS FOR SEAMLESS FEEL */}
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent z-20 pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
+    </div>
+  );
+};
+
+const StageDiscovery = ({ containerRef }) => {
   const targetRef = useRef(null);
   
-  // Local effect to catch the "fully on screen" moment
-  React.useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current || isPageLocked) return;
-      
-      const scrollLeft = containerRef.current.scrollLeft;
-      const viewportWidth = containerRef.current.clientWidth;
-      const targetPos = viewportWidth; // Discovery is at index 1
-      
-      // If we've reached the stage exactly, lock it
-      if (Math.abs(scrollLeft - targetPos) < 10) {
-        setIsLocked(true);
-      }
-    };
-
-    const container = containerRef.current;
-    container?.addEventListener('scroll', handleScroll);
-    return () => container?.removeEventListener('scroll', handleScroll);
-  }, [containerRef, isPageLocked, setIsLocked]);
-
   const { scrollXProgress } = useScroll({
     target: targetRef,
     container: containerRef,
@@ -127,7 +150,7 @@ const StageDiscovery = ({ containerRef, setIsLocked, lockRef, isPageLocked }) =>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">Ecosystem</span>
           </h2>
         </div>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 0.6, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8 }}
@@ -137,42 +160,8 @@ const StageDiscovery = ({ containerRef, setIsLocked, lockRef, isPageLocked }) =>
         </motion.p>
       </motion.div>
 
-      <div 
-        className="block md:hidden w-full h-[60vh] touch-pan-y pointer-events-auto"
-        onWheel={(e) => {
-          // If we are not locked yet, let it bubble so we can reach the stage
-          if (!isPageLocked) return;
-          e.stopPropagation();
-        }}
-      >
-        <ScrollStack 
-          itemDistance={50} 
-          stackPosition="15%" 
-          itemScale={0.05}
-          className="h-full"
-          onStackComplete={() => {
-            // Optional: could auto-unlock here, but LandingPage handleWheel 
-            // already handles boundary release
-          }}
-          // Pass the lock ref to the actual scroller
-          ref={lockRef}
-        >
-          {features.map((feat, i) => (
-            <ScrollStackItem key={i} itemClassName={feat.className + " !my-4 !h-auto !min-h-[200px] !p-6"}>
-              <div className="space-y-4 relative z-10">
-                <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center border shadow-lg ${feat.iconBg}`}>
-                  <feat.icon className="w-6 h-6" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-black tracking-tight leading-tight">{feat.title}</h3>
-                  <p className="text-on-surface-variant text-xs leading-relaxed opacity-70">
-                    {feat.desc}
-                  </p>
-                </div>
-              </div>
-            </ScrollStackItem>
-          ))}
-        </ScrollStack>
+      <div className="block md:hidden w-full h-[60vh] pointer-events-none overflow-hidden relative">
+        <DiscoveryMobileList features={features} />
       </div>
 
       {/* Desktop Grid */}

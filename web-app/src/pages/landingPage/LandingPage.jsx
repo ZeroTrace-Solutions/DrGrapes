@@ -26,7 +26,8 @@ const LandingPage = () => {
     let animationFrame;
     const smoothUpdate = () => {
       if (scrollRef.current) {
-        currentScroll.current += (targetScroll.current - currentScroll.current) * 0.1;
+        // Increased lerp speed from 0.1 to 0.15 for more responsive feedback
+        currentScroll.current += (targetScroll.current - currentScroll.current) * 0.15;
         scrollRef.current.scrollLeft = currentScroll.current;
       }
       animationFrame = requestAnimationFrame(smoothUpdate);
@@ -39,22 +40,26 @@ const LandingPage = () => {
     if (scrollRef.current) {
       if (isLocked && lockRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = lockRef.current;
+
+        // Small buffer for cleaner handoff
         const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
         const isAtTop = scrollTop <= 5;
 
-        // If scrolling down and not at bottom, or scrolling up and not at top, lock it
+        // Capture scroll if we are not at the respective boundary
         if ((e.deltaY > 0 && !isAtBottom) || (e.deltaY < 0 && !isAtTop)) {
+          // multiplier 1.0 for "same as anywhere else" feel
           lockRef.current.scrollTop += e.deltaY;
           return;
         }
-        
-        // Otherwise, release the lock if we're moving past the boundaries
+
+        // Release lock if we try to scroll past boundaries
         setIsLocked(false);
       }
 
-      // Update target scroll position with reduced sensitivity
+      // Update horizontal scroll with slightly increased sensitivity for a snappier feel
+      const sensitivity = 1.2;
       targetScroll.current = Math.max(0, Math.min(
-        targetScroll.current + e.deltaY * 0.6,
+        targetScroll.current + e.deltaY * sensitivity,
         scrollRef.current.scrollWidth - scrollRef.current.clientWidth
       ));
     }
@@ -75,13 +80,18 @@ const LandingPage = () => {
 
   const handleTouchMove = (e) => {
     if (!scrollRef.current) return;
-    
+
     const touchY = e.touches[0].clientY;
     const deltaY = lastTouchY.current - touchY;
     lastTouchY.current = touchY;
 
-    // Simulate wheel event for touch
-    handleWheel({ deltaY: deltaY * 2, stopPropagation: () => {} });
+    // Use a higher multiplier for touch to overcome the "heavy" feeling of simulated scroll
+    handleWheel({
+      deltaY: deltaY * 1.8,
+      isTouch: true,
+      stopPropagation: () => { },
+      preventDefault: () => { }
+    });
   };
 
   return (
@@ -121,20 +131,24 @@ const LandingPage = () => {
       </div>
 
       {/* Floating UI reacts to horizontal scroll now */}
-      <FloatingIcons 
-        scrollYProgress={scrollXProgress} 
-        scrollRef={scrollRef} 
-        onNavigate={scrollToStage} 
+      <FloatingIcons
+        scrollYProgress={scrollXProgress}
+        scrollRef={scrollRef}
+        onNavigate={scrollToStage}
       />
-      <StageIndicator 
-        scrollYProgress={scrollXProgress} 
-        onStageClick={scrollToStage} 
-      />
+      <div className="fixed bottom-0 left-0 right-0 z-[1000] pointer-events-none">
+        <div className="pointer-events-auto">
+          <StageIndicator
+            scrollYProgress={scrollXProgress}
+            onStageClick={scrollToStage}
+          />
+        </div>
+      </div>
 
       {/* Edge Blur Vignette */}
       <div className="fixed inset-y-0 left-0 w-8 md:w-24 z-[200] pointer-events-none backdrop-blur-[4px] md:backdrop-blur-[20px] [mask-image:linear-gradient(to_right,black,transparent)]" />
       <div className="fixed inset-y-0 right-0 w-8 md:w-24 z-[200] pointer-events-none backdrop-blur-[4px] md:backdrop-blur-[20px] [mask-image:linear-gradient(to_left,black,transparent)]" />
-      
+
       {/* Edge Dark Vignette for 'swallowing' effect */}
       <div className="fixed inset-y-0 left-0 w-8 md:w-24 z-[150] pointer-events-none bg-gradient-to-r from-[#0c0f0f] to-transparent opacity-20 md:opacity-40" />
       <div className="fixed inset-y-0 right-0 w-8 md:w-24 z-[150] pointer-events-none bg-gradient-to-l from-[#0c0f0f] to-transparent opacity-20 md:opacity-40" />
@@ -149,11 +163,8 @@ const LandingPage = () => {
           <StageIntro scrollYProgress={scrollXProgress} onNavigate={scrollToStage} />
         </div>
         <div className="flex-shrink-0 w-screen h-full overflow-hidden">
-          <StageDiscovery 
-            containerRef={scrollRef} 
-            setIsLocked={setIsLocked} 
-            lockRef={lockRef} 
-            isPageLocked={isLocked}
+          <StageDiscovery
+            containerRef={scrollRef}
           />
         </div>
         {/* <div className="flex-shrink-0 w-screen h-full overflow-hidden">

@@ -18,9 +18,9 @@ const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
   ]);
 
   return (
-    <motion.button 
+    <motion.button
       onClick={() => onClick(i)}
-      style={{ opacity, color }} 
+      style={{ opacity, color }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       className="text-[10px] font-bold tracking-widest uppercase bg-transparent border-none cursor-pointer outline-none transition-colors hover:text-primary"

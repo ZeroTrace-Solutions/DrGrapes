@@ -49,41 +49,39 @@ const StageMission = ({ containerRef }) => {
   ];
 
   return (
-    <section ref={targetRef} className="w-screen h-full flex items-center justify-center p-6 md:p-20 bg-transparent relative overflow-hidden shrink-0">
-      <motion.div style={{ opacity }} className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center overflow-y-auto md:overflow-visible pr-2 py-10 md:py-0">
+    <section ref={targetRef} className="w-screen h-full flex items-center justify-center p-4 md:p-20 bg-transparent relative overflow-hidden shrink-0">
+      <motion.div style={{ opacity }} className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-20 items-center overflow-y-auto md:overflow-visible no-scrollbar pr-1 py-8 md:py-0">
 
         {/* LEFT SECTION */}
-        <motion.div style={{ opacity: opacityLeft, x: xLeft }} className="lg:col-span-5 space-y-8 md:space-y-12 text-center lg:text-left">
+        <motion.div style={{ opacity: opacityLeft, x: xLeft }} className="lg:col-span-5 space-y-6 md:space-y-12 text-center lg:text-left">
           <motion.div
             style={{
               opacity: useTransform(scrollXProgress, [0.15, 0.3], [0, 1]),
               y: useTransform(scrollXProgress, [0.15, 0.3], [20, 0])
             }}
-            className="flex flex-col lg:flex-row items-center gap-4"
+            className="flex flex-col lg:flex-row items-center gap-3 md:gap-4"
           >
-
-            <img src={logo} alt="Dr. Grapes" className="w-auto h-10 md:w-auto md:h-12" />
-
-            <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase">Dr. Grapes</h2>
+            <img src={logo} alt="Dr. Grapes" className="w-auto h-8 md:h-12" />
+            <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase">Dr. Grapes</h2>
           </motion.div>
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <motion.p
               style={{
                 opacity: useTransform(scrollXProgress, [0.2, 0.35], [0, 1]),
                 y: useTransform(scrollXProgress, [0.2, 0.35], [20, 0])
               }}
-              className="text-on-surface-variant text-base md:text-lg leading-relaxed max-w-md mx-auto lg:mx-0"
+              className="text-on-surface-variant text-sm md:text-lg leading-relaxed max-w-md mx-auto lg:mx-0 opacity-80"
             >
               Our mission is to empower the next generation of healers with the precision tools and knowledge they deserve.
             </motion.p>
-            <div className="pt-4 md:pt-8">
+            <div className="pt-2 md:pt-8">
               <motion.h3
                 style={{
                   opacity: useTransform(scrollXProgress, [0.25, 0.4], [0, 1]),
                   scale: useTransform(scrollXProgress, [0.25, 0.4], [0.8, 1]),
                   fontFamily: "'Dancing Script', cursive"
                 }}
-                className="text-6xl md:text-8xl text-white font-normal leading-none"
+                className="text-5xl md:text-8xl text-white font-normal leading-none"
               >
                 Dr. Grapes
               </motion.h3>
@@ -92,17 +90,17 @@ const StageMission = ({ containerRef }) => {
         </motion.div>
 
         {/* MIDDLE SECTION */}
-        <motion.div style={{ opacity: opacityMid, y: yMid }} className="lg:col-span-4 space-y-6 md:space-y-10 flex flex-col items-center lg:items-start">
+        <motion.div style={{ opacity: opacityMid, y: yMid }} className="lg:col-span-4 space-y-4 md:space-y-10 flex flex-col items-center lg:items-start">
           <motion.h4
             style={{
               opacity: useTransform(scrollXProgress, [0.2, 0.3], [0, 1]),
               y: useTransform(scrollXProgress, [0.2, 0.3], [-10, 0])
             }}
-            className="text-xs font-black uppercase tracking-[0.3em] text-primary/60"
+            className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-primary/60"
           >
             Connect With Us
           </motion.h4>
-          <div className="flex flex-wrap lg:flex-col justify-center lg:justify-start gap-4 w-full">
+          <div className="flex flex-row lg:flex-col justify-center lg:justify-start gap-3 md:gap-4 w-full">
             {socialLinks.map((link, i) => (
               <motion.a
                 key={i}
@@ -112,29 +110,54 @@ const StageMission = ({ containerRef }) => {
                   scale: useTransform(scrollXProgress, [0.2 + (i * 0.05), 0.35 + (i * 0.05)], [0.8, 1])
                 }}
                 whileHover={{ scale: 1.05, x: 10, color: "var(--primary)" }}
-                className="flex items-center gap-4 p-4 rounded-2xl md:rounded-3xl bg-white/5 border border-white/5 text-on-surface/60 transition-all hover:bg-primary/5 w-auto lg:w-full"
+                className="flex items-center gap-4 p-3 md:p-4 rounded-xl md:rounded-3xl bg-white/5 border border-white/5 text-on-surface/60 transition-all hover:bg-primary/5 w-auto lg:w-full"
               >
-                <link.icon className="w-6 h-6" />
+                <link.icon className="w-5 h-5 md:w-6 md:h-6" />
                 <span className="hidden lg:block text-sm font-bold uppercase tracking-widest">{link.label}</span>
               </motion.a>
             ))}
           </div>
-          <div className="pt-6 md:pt-10 flex flex-col items-center lg:items-start">
+
+          {/* DEVELOPED BY - Desktop Only (Middle) */}
+          <div className="hidden md:flex pt-6 md:pt-10 flex-col items-center lg:items-start space-y-4">
+            <motion.p
+              style={{
+                opacity: useTransform(scrollXProgress, [0.35, 0.45], [0, 0.4]),
+                y: useTransform(scrollXProgress, [0.35, 0.45], [10, 0])
+              }}
+              className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white"
+            >
+              Developed By
+            </motion.p>
+            <motion.div
+              style={{
+                opacity: useTransform(scrollXProgress, [0.4, 0.5], [0, 1]),
+                scale: useTransform(scrollXProgress, [0.4, 0.5], [0.9, 1])
+              }}
+              className="flex items-center gap-3 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer"
+              onClick={() => window.open('https://portal.ztsolutions.tech', '_blank')}
+            >
+              <img src={ztLogo} alt="ZeroTrace Solutions" className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+              <div className="flex flex-col">
+                <span className="text-[10px] md:text-xs font-black tracking-tighter uppercase leading-none">ZT</span>
+                <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase leading-none opacity-50">Solutions</span>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
         {/* RIGHT SECTION */}
-        <motion.div style={{ opacity: opacityRight, x: xRight }} className="lg:col-span-3 space-y-6 md:space-y-8 flex flex-col items-center lg:items-start w-full">
+        <motion.div style={{ opacity: opacityRight, x: xRight }} className="lg:col-span-3 space-y-4 md:space-y-8 flex flex-col items-center lg:items-start w-full">
           <motion.h4
             style={{
               opacity: useTransform(scrollXProgress, [0.3, 0.4], [0, 1]),
               y: useTransform(scrollXProgress, [0.3, 0.4], [-10, 0])
             }}
-            className="text-xs font-black uppercase tracking-[0.3em] text-secondary/60"
+            className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-secondary/60"
           >
             Legal Information
           </motion.h4>
-          <div className="flex flex-wrap lg:flex-col justify-center lg:justify-start gap-3 w-full">
+          <div className="flex flex-row lg:flex-col justify-center lg:justify-start gap-2 md:gap-3 w-full">
             {legalItems.map((item, i) => (
               <motion.button
                 key={i}
@@ -143,19 +166,46 @@ const StageMission = ({ containerRef }) => {
                   scale: useTransform(scrollXProgress, [0.3 + (i * 0.06), 0.45 + (i * 0.06)], [0.9, 1])
                 }}
                 whileHover={{ scale: 1.05, x: 10, color: "var(--secondary)" }}
-                className="w-auto lg:w-full text-left px-6 py-3 md:p-4 rounded-full md:rounded-3xl bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 hover:bg-secondary/5"
+                className="w-auto lg:w-full text-left px-4 py-2 md:p-4 rounded-full md:rounded-3xl bg-white/5 border border-white/5 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] text-white/40 hover:bg-secondary/5"
               >
                 {item.label}
               </motion.button>
             ))}
           </div>
-          <motion.div style={{ opacity: useTransform(scrollXProgress, [0.4, 0.5], [0, 1]), y: useTransform(scrollXProgress, [0.4, 0.5], [20, 0]) }} className="mt-10 md:mt-20 p-6 md:p-8 rounded-[30px] md:rounded-[40px] bg-gradient-to-br from-primary/10 to-secondary/10 border border-white/10 backdrop-blur-sm w-full text-center">
-            <p className="text-xs md:text-sm font-medium italic">"We are a superApp
+          <motion.div style={{ opacity: useTransform(scrollXProgress, [0.4, 0.5], [0, 1]), y: useTransform(scrollXProgress, [0.4, 0.5], [20, 0]) }} className="hidden md:block mt-6 md:mt-20 p-5 md:p-8 rounded-[24px] md:rounded-[40px] bg-gradient-to-br from-primary/5 to-secondary/5 border border-white/5 backdrop-blur-sm w-full text-center">
+            <p className="text-[10px] md:text-sm font-medium italic opacity-60">"We are a superApp
               <br />
               With no gap
               <br />
               All in one."</p>
           </motion.div>
+
+          {/* DEVELOPED BY - Mobile Only (Right) */}
+          <div className="flex md:hidden pt-6 md:pt-10 flex-col items-center lg:items-start space-y-4">
+            <motion.p
+              style={{
+                opacity: useTransform(scrollXProgress, [0.35, 0.45], [0, 0.4]),
+                y: useTransform(scrollXProgress, [0.35, 0.45], [10, 0])
+              }}
+              className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-white"
+            >
+              Developed By
+            </motion.p>
+            <motion.div
+              style={{
+                opacity: useTransform(scrollXProgress, [0.4, 0.5], [0, 1]),
+                scale: useTransform(scrollXProgress, [0.4, 0.5], [0.9, 1])
+              }}
+              className="flex items-center gap-3 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer"
+              onClick={() => window.open('https://portal.ztsolutions.tech', '_blank')}
+            >
+              <img src={ztLogo} alt="ZeroTrace Solutions" className="w-6 h-6 md:w-8 md:h-8 object-contain" />
+              <div className="flex flex-col">
+                <span className="text-[10px] md:text-xs font-black tracking-tighter uppercase leading-none">ZT</span>
+                <span className="text-[10px] md:text-xs font-medium tracking-widest uppercase leading-none opacity-50">Solutions</span>
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
       </motion.div>
       <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[180px] rounded-full -z-10" />
