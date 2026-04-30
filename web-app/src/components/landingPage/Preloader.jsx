@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import logo from '@/assets/dr-grapes-logo.png';
+import { useTranslation } from 'react-i18next';
 
 const Preloader = () => {
+  const { t } = useTranslation('landingPage');
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -16,7 +19,7 @@ const Preloader = () => {
         transition={{ duration: 0.8, delay: 0.2 }}
         className="space-y-4 text-center"
       >
-        <h2 className="text-xl font-bold text-secondary tracking-[0.8em] uppercase opacity-60">Welcome to</h2>
+        <h2 className="text-xl font-bold text-secondary tracking-[0.8em] uppercase opacity-60">{t('preloader.welcome')}</h2>
       </motion.div>
       <motion.img 
         src={logo} 

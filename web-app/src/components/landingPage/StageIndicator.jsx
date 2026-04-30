@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, useTransform, useSpring } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
   const center = i / (total - 1);
@@ -31,7 +32,13 @@ const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
 };
 
 const StageIndicator = ({ scrollYProgress, onStageClick }) => {
-  const stages = ['Intro', 'Discovery', 'Mobile', 'Mission'];
+  const { t, i18n } = useTranslation('landingPage');
+  const stages = [
+    t('common.stages.intro'),
+    t('common.stages.discovery'),
+    t('common.stages.mobile'),
+    t('common.stages.mission')
+  ];
 
   // Refined width calculation: spring the numeric value, then convert to %
   const progressPercent = useTransform(scrollYProgress, [0, 1], [0, 100]);
@@ -39,7 +46,7 @@ const StageIndicator = ({ scrollYProgress, onStageClick }) => {
   const width = useTransform(springWidth, (val) => `${val}%`);
 
   return (
-    <div className="fixed bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[90vw] md:max-w-2xl px-4 md:px-8">
+    <div dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} className="fixed bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[90vw] md:max-w-2xl px-4 md:px-8">
       <div className="relative h-1.5 bg-surface-container rounded-full overflow-hidden backdrop-blur-md border border-outline/10">
         <motion.div
           className="absolute h-full bg-gradient-to-r from-primary-container via-primary to-secondary-container shadow-[0_0_15px_rgba(193,53,132,0.5)]"

@@ -1,0 +1,94 @@
+{
+  "preloader": {
+    "welcome": "Welcome to"
+  },
+  "common": {
+    "stages": {
+      "intro": "Intro",
+      "discovery": "Discovery",
+      "mobile": "Mobile",
+      "mission": "Mission"
+    },
+    "hub": {
+      "title": "Ecosystem Hub",
+      "items": {
+        "home": "Home",
+        "market": "Market",
+        "app": "App",
+        "login": "Login",
+        "contact": "Contact"
+      },
+      "toastTitle": "{{label}} Coming Soon",
+      "toastDesc": "We are currently perfecting this module for the next generation of healers."
+    }
+  },
+  "intro": {
+    "guide": "Your Guide For Your",
+    "journey": "Medical Journey",
+    "shopNow": "Shop Now",
+    "downloadApp": "Download App",
+    "comingSoon": "Soon",
+    "shopToastTitle": "Marketplace Coming Soon",
+    "shopToastDesc": "The Dr. Grapes shop is currently being curated for the best medical supplies."
+  },
+  "discovery": {
+    "title1": "Complete",
+    "title2": "Ecosystem",
+    "subtitle": "Everything a medical student needs to excel.",
+    "features": {
+      "qbank": {
+        "title": "Q-Bank Excellence",
+        "desc": "Vast question banks tailored for every medical exam with high-yield explanations."
+      },
+      "shop": {
+        "title": "24/7 Shop",
+        "desc": "Premium medical equipment at the best costs."
+      },
+      "relocation": {
+        "title": "Medical Equivalency",
+        "desc": "Your comprehensive guide to passing global exams and practicing abroad."
+      },
+      "community": {
+        "title": "Global Community",
+        "desc": "Connect, share experience, and train together."
+      }
+    }
+  },
+  "mobile": {
+    "badge": "SuperApp",
+    "titleLine1": "Study",
+    "titleLine2": "Anywhere.",
+    "description": "The Dr. Grapes SuperApp features 10,000+ MCQs, medical videos, shop for medical equipment, and a dedicated community.",
+    "appStore": "App Store",
+    "googlePlay": "Google Play"
+  },
+  "mission": {
+    "title": "Dr. Grapes",
+    "description": "Our mission is to empower the next generation of healers with the precision tools and knowledge they deserve.",
+    "connect": "Connect With Us",
+    "legal": "Legal Information",
+    "socials": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "email": "Email Support"
+    },
+    "legalItems": {
+      "terms": "Terms of Services",
+      "privacy": "Privacy Policy"
+    },
+    "quote": "\"We are a superApp\nWith no gap\nAll in one.\"",
+    "developedBy": "Developed By"
+  },
+  "gear": {
+    "titleLine1": "The",
+    "titleLine2": "Bestseller",
+    "titleLine3": "Series",
+    "subtitle": "Swipe through our most requested professional equipment.",
+    "viewGear": "View Gear",
+    "products": {
+      "stethoscope": "Elite Stethoscope",
+      "atlas": "Anatomy Atlas",
+      "kit": "Diagnostic Kit"
+    }
+  }
+}

@@ -1,16 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 // Components
 import FloatingIcons from '@/components/landingPage/FloatingIcons';
 import StageIndicator from '@/components/landingPage/StageIndicator';
 import StageIntro from '@/components/landingPage/StageIntro';
 import StageDiscovery from '@/components/landingPage/StageDiscovery';
-import StageGear from '@/components/landingPage/StageGear';
 import StageMobile from '@/components/landingPage/StageMobile';
 import StageMission from '@/components/landingPage/StageMission';
 
 const LandingPage = () => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
   const scrollRef = useRef(null);
   const { scrollXProgress } = useScroll({
     container: scrollRef,
@@ -22,45 +25,49 @@ const LandingPage = () => {
   const [isLocked, setIsLocked] = useState(false);
   const lockRef = useRef(null);
 
+  // Sync currentScroll with actual scroll position on language change
+  useEffect(() => {
+    if (scrollRef.current) {
+      targetScroll.current = 0;
+      currentScroll.current = 0;
+      scrollRef.current.scrollLeft = 0;
+    }
+  }, [isRTL]);
+
   useEffect(() => {
     let animationFrame;
     const smoothUpdate = () => {
       if (scrollRef.current) {
-        // Increased lerp speed from 0.1 to 0.15 for more responsive feedback
         currentScroll.current += (targetScroll.current - currentScroll.current) * 0.15;
-        scrollRef.current.scrollLeft = currentScroll.current;
+        // In modern browsers, RTL scrollLeft is 0 at right and negative to the left
+        scrollRef.current.scrollLeft = isRTL ? -currentScroll.current : currentScroll.current;
       }
       animationFrame = requestAnimationFrame(smoothUpdate);
     };
     animationFrame = requestAnimationFrame(smoothUpdate);
     return () => cancelAnimationFrame(animationFrame);
-  }, []);
+  }, [isRTL]);
 
   const handleWheel = (e) => {
     if (scrollRef.current) {
       if (isLocked && lockRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = lockRef.current;
-
-        // Small buffer for cleaner handoff
         const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
         const isAtTop = scrollTop <= 5;
 
-        // Capture scroll if we are not at the respective boundary
         if ((e.deltaY > 0 && !isAtBottom) || (e.deltaY < 0 && !isAtTop)) {
-          // multiplier 1.0 for "same as anywhere else" feel
           lockRef.current.scrollTop += e.deltaY;
           return;
         }
-
-        // Release lock if we try to scroll past boundaries
         setIsLocked(false);
       }
 
-      // Update horizontal scroll with slightly increased sensitivity for a snappier feel
       const sensitivity = 1.2;
+      const scrollMax = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+      
       targetScroll.current = Math.max(0, Math.min(
         targetScroll.current + e.deltaY * sensitivity,
-        scrollRef.current.scrollWidth - scrollRef.current.clientWidth
+        scrollMax
       ));
     }
   };
@@ -85,7 +92,6 @@ const LandingPage = () => {
     const deltaY = lastTouchY.current - touchY;
     lastTouchY.current = touchY;
 
-    // Use a higher multiplier for touch to overcome the "heavy" feeling of simulated scroll
     handleWheel({
       deltaY: deltaY * 1.8,
       isTouch: true,
@@ -99,6 +105,7 @@ const LandingPage = () => {
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      dir={isRTL ? 'rtl' : 'ltr'}
       className="relative bg-background text-on-surface overflow-hidden font-sans selection:bg-primary/30 h-screen w-screen touch-none"
     >
       {/* Global Background Layer */}
@@ -109,7 +116,7 @@ const LandingPage = () => {
         {/* Dynamic primary glow (Magenta) */}
         <motion.div
           style={{
-            x: useTransform(scrollXProgress, [0, 1], ['-15%', '40%']),
+            x: useTransform(scrollXProgress, [0, 1], isRTL ? ['15%', '-40%'] : ['-15%', '40%']),
             y: useTransform(scrollXProgress, [0, 1], ['-10%', '20%']),
           }}
           className="absolute -top-[20%] -left-[10%] w-[100%] h-[100%] bg-primary/10 blur-[180px] rounded-full"
@@ -117,7 +124,7 @@ const LandingPage = () => {
         {/* Dynamic secondary glow (Blue) */}
         <motion.div
           style={{
-            x: useTransform(scrollXProgress, [0, 1], ['30%', '-30%']),
+            x: useTransform(scrollXProgress, [0, 1], isRTL ? ['-30%', '30%'] : ['30%', '-30%']),
             y: useTransform(scrollXProgress, [0, 1], ['40%', '70%']),
           }}
           className="absolute top-[30%] -right-[20%] w-[90%] h-[90%] bg-secondary/10 blur-[180px] rounded-full"
@@ -156,25 +163,23 @@ const LandingPage = () => {
       {/* NATIVE HORIZONTAL SCROLL CONTAINER */}
       <div
         ref={scrollRef}
+        dir={isRTL ? 'rtl' : 'ltr'}
         className="relative z-10 h-full w-full overflow-x-auto overflow-y-hidden flex no-scrollbar"
         style={{ scrollBehavior: 'auto' }}
       >
         <div className="flex-shrink-0 w-screen h-full overflow-hidden">
-          <StageIntro scrollYProgress={scrollXProgress} onNavigate={scrollToStage} />
+          <StageIntro scrollXProgress={scrollXProgress} onNavigate={scrollToStage} />
         </div>
         <div className="flex-shrink-0 w-screen h-full overflow-hidden">
           <StageDiscovery
-            containerRef={scrollRef}
+            scrollXProgress={scrollXProgress}
           />
         </div>
-        {/* <div className="flex-shrink-0 w-screen h-full overflow-hidden">
-          <StageGear containerRef={scrollRef} />
-        </div> */}
         <div className="flex-shrink-0 w-screen h-full overflow-hidden">
-          <StageMobile containerRef={scrollRef} />
+          <StageMobile scrollXProgress={scrollXProgress} />
         </div>
         <div className="flex-shrink-0 w-screen h-full overflow-hidden">
-          <StageMission containerRef={scrollRef} />
+          <StageMission scrollXProgress={scrollXProgress} />
         </div>
       </div>
     </div>

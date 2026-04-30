@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { BookOpen, ShoppingBag, Users, Map, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import BlurText from '../ui/BlurText';
-import ScrollStack, { ScrollStackItem } from '../ui/ScrollStack';
 
 const DiscoveryCard = ({ feat, i, scrollXProgress }) => {
   // Individual card scroll entrance
@@ -40,6 +40,7 @@ const DiscoveryCard = ({ feat, i, scrollXProgress }) => {
     </motion.div>
   );
 };
+
 
 const DiscoveryMobileList = ({ features }) => {
   return (
@@ -84,45 +85,41 @@ const DiscoveryMobileList = ({ features }) => {
   );
 };
 
-const StageDiscovery = ({ containerRef }) => {
-  const targetRef = useRef(null);
+const StageDiscovery = ({ scrollXProgress }) => {
+  const { t } = useTranslation('landingPage');
   
-  const { scrollXProgress } = useScroll({
-    target: targetRef,
-    container: containerRef,
-    axis: "x",
-    offset: ["start end", "end start"]
-  });
+  // Create a local progress from the global one (Stage 1 of 4: range [0.25, 0.5])
+  const localProgress = useTransform(scrollXProgress, [0.25, 0.5], [0, 1]);
 
   const features = [
     {
-      title: "Q-Bank Excellence",
+      title: t('discovery.features.qbank.title'),
       icon: BookOpen,
-      desc: "Vast question banks tailored for every medical exam with high-yield explanations.",
+      desc: t('discovery.features.qbank.desc'),
       className: "col-span-1 md:col-span-2 row-span-1 md:row-span-2 bg-surface-container-high",
       iconBg: "text-primary bg-primary/10 border-primary/20",
       accent: "bg-primary"
     },
     {
-      title: "24/7 Shop",
+      title: t('discovery.features.shop.title'),
       icon: ShoppingBag,
-      desc: "Premium medical equipment at the best costs.",
+      desc: t('discovery.features.shop.desc'),
       className: "col-span-1 row-span-1 bg-surface-container",
       iconBg: "text-secondary bg-secondary/10 border-secondary/20",
       accent: "bg-secondary"
     },
     {
-      title: "Relocation",
+      title: t('discovery.features.relocation.title'),
       icon: Map,
-      desc: "Your roadmap to global medical practice.",
+      desc: t('discovery.features.relocation.desc'),
       className: "col-span-1 row-span-1 bg-surface-container",
       iconBg: "text-primary bg-primary/10 border-primary/20",
       accent: "bg-primary"
     },
     {
-      title: "Global Community",
+      title: t('discovery.features.community.title'),
       icon: Users,
-      desc: "Connect, share experience, and train together.",
+      desc: t('discovery.features.community.desc'),
       className: "col-span-1 md:col-span-2 row-span-1 bg-surface-container-highest",
       iconBg: "text-secondary bg-secondary/10 border-secondary/20",
       accent: "bg-secondary"
@@ -130,33 +127,34 @@ const StageDiscovery = ({ containerRef }) => {
   ];
 
   return (
-    <section ref={targetRef} className="w-screen h-full flex flex-col items-center justify-center p-6 md:p-20 bg-transparent space-y-8 md:space-y-12">
+    <section className="w-screen h-full flex flex-col items-center justify-center p-6 md:p-20 bg-transparent space-y-8 md:space-y-12">
       <motion.div
         style={{
-          opacity: useTransform(scrollXProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]),
-          y: useTransform(scrollXProgress, [0, 0.15], [20, 0])
+          opacity: useTransform(localProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]),
+          y: useTransform(localProgress, [0, 0.15], [20, 0])
         }}
         className="text-center space-y-3"
       >
         <div className="flex flex-col items-center">
           <BlurText
-            text="Complete"
+            text={t('discovery.title1')}
             delay={150}
             animateBy="words"
             direction="top"
             className="text-4xl md:text-6xl font-black uppercase tracking-tighter"
           />
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter -mt-1 md:-mt-2">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">Ecosystem</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">{t('discovery.title2')}</span>
           </h2>
         </div>
         <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 0.6, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
+          style={{
+            opacity: useTransform(localProgress, [0.1, 0.25], [0, 0.6]),
+            y: useTransform(localProgress, [0.1, 0.25], [10, 0])
+          }}
           className="text-on-surface-variant text-sm md:text-lg max-w-xs md:max-w-none"
         >
-          Everything a medical student needs to excel.
+          {t('discovery.subtitle')}
         </motion.p>
       </motion.div>
 
@@ -167,7 +165,7 @@ const StageDiscovery = ({ containerRef }) => {
       {/* Desktop Grid */}
       <div className="hidden md:grid max-w-6xl w-full grid-cols-4 gap-5 pr-2">
         {features.map((feat, i) => (
-          <DiscoveryCard key={i} feat={feat} i={i} scrollXProgress={scrollXProgress} />
+          <DiscoveryCard key={i} feat={feat} i={i} scrollXProgress={localProgress} />
         ))}
       </div>
     </section>
