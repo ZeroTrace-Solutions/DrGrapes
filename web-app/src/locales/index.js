@@ -4,13 +4,17 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import landingPageEn from './en/landingPage.json';
 import landingPageAr from './ar/landingPage.json';
+import legalEn from './en/legal.json';
+import legalAr from './ar/legal.json';
 
 const resources = {
   en: {
     landingPage: landingPageEn,
+    legal: legalEn,
   },
   ar: {
     landingPage: landingPageAr,
+    legal: legalAr,
   },
 };
 

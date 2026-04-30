@@ -1,0 +1,70 @@
+{
+  "common": {
+    "footer": "© 2026 Dr. Grapes - Medical Students Ecosystem",
+    "backHome": "Back to Home"
+  },
+  "tos": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last Updated: May 2026",
+    "sections": {
+      "intro": {
+        "title": "1. Introduction",
+        "content": "Welcome to Dr. Grapes. These Terms of Service govern your use of our mobile application and web platform. By accessing or using our services, you agree to be bound by these terms. If you do not agree, please do not use our platform."
+      },
+      "eligibility": {
+        "title": "2. Eligibility and Accounts",
+        "content": "Our services are intended for medical students, healthcare professionals, and authorized partners (factories and delivery companies). You must provide accurate information when creating an account and are responsible for maintaining its security."
+      },
+      "ecommerce": {
+        "title": "3. E-commerce and Equipment Store",
+        "content": "We facilitate the purchase of medical equipment. Orders are subject to availability. Prices and shipping costs are displayed at checkout. Factories/Suppliers are responsible for product quality, and Delivery Companies are responsible for transit from the warehouse to your location."
+      },
+      "qbank": {
+        "title": "4. Question Bank and Educational Content",
+        "content": "Our Question Bank is for educational purposes only. You are granted a limited, non-transferable license to access the content for personal study. Unauthorized distribution or copying of proprietary questions is strictly prohibited."
+      },
+      "community": {
+        "title": "5. Community, Blogs, and Podcasts",
+        "content": "User-generated content must be professional and respectful. We reserve the right to remove content that violates our standards. Blogs, podcasts, and training opportunities provided by third parties are subject to their own terms."
+      },
+      "partners": {
+        "title": "6. Partners: Factories and Delivery",
+        "content": "Factories (Suppliers) using the web portal represent that their products meet medical standards. Delivery partners agree to handle equipment with the care required for medical devices. Dr. Grapes acts as an intermediary platform."
+      },
+      "liability": {
+        "title": "7. Limitation of Liability",
+        "content": "Dr. Grapes is not liable for medical errors resulting from the use of our educational materials or for defects in third-party products. Our maximum liability is limited to the amount paid for the specific service or product in question."
+      },
+      "termination": {
+        "title": "8. Termination",
+        "content": "We reserve the right to suspend or terminate accounts that violate these terms, engage in fraudulent activity, or misuse the Question Bank content."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: May 2026",
+    "sections": {
+      "dataCollection": {
+        "title": "1. Data We Collect",
+        "content": "We collect personal information (name, email, university), payment data (processed securely), and usage data (study progress, search history). We also collect business data from our factory and delivery partners."
+      },
+      "usage": {
+        "title": "2. How We Use Data",
+        "content": "Data is used to personalize your study experience, process orders, facilitate delivery, and manage the Dr. Grapes community. We may use anonymized data for platform improvements."
+      },
+      "sharing": {
+        "title": "3. Data Sharing",
+        "content": "Your shipping info is shared with the Delivery Company. Your order details are shared with the relevant Factory. We do not sell your personal data to third-party advertisers."
+      },
+      "security": {
+        "title": "4. Security",
+        "content": "We implement industry-standard encryption and security measures to protect your medical and personal data. However, no system is 100% secure."
+      },
+      "rights": {
+        "title": "5. Your Rights",
+        "content": "You have the right to access, correct, or delete your personal data. You can manage your notification preferences within the app settings."
+      }
+    }
+  }
+}

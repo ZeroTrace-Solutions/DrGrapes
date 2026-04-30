@@ -4,6 +4,7 @@ import { Mail, ExternalLink, ShieldCheck, FileText } from 'lucide-react';
 import logo from '@/assets/dr-grapes-icon.png';
 import ztLogo from '@/assets/zt-solutions-icon.png';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const FacebookIcon = ({ className }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -20,6 +21,7 @@ const InstagramIcon = ({ className }) => (
 
 const StageMission = ({ scrollXProgress }) => {
   const { t, i18n } = useTranslation('landingPage');
+  const navigate = useNavigate();
 
   // Create local progress (Stage 3 of 4: range [0.75, 1.0])
   const localProgress = useTransform(scrollXProgress, [0.75, 1.0], [0, 1]);
@@ -43,8 +45,8 @@ const StageMission = ({ scrollXProgress }) => {
   ];
 
   const legalItems = [
-    { icon: ShieldCheck, label: t('mission.legalItems.terms'), color: "text-secondary" },
-    { icon: FileText, label: t('mission.legalItems.privacy'), color: "text-secondary" }
+    { id: 'terms', icon: ShieldCheck, label: t('mission.legalItems.terms'), color: "text-secondary" },
+    { id: 'privacy', icon: FileText, label: t('mission.legalItems.privacy'), color: "text-secondary" }
   ];
 
   return (
@@ -166,6 +168,7 @@ const StageMission = ({ scrollXProgress }) => {
                   scale: useTransform(localProgress, [0.3 + (i * 0.06), 0.45 + (i * 0.06)], [0.9, 1])
                 }}
                 whileHover={{ scale: 1.05, x: 10, color: "var(--secondary)" }}
+                onClick={() => navigate(item.id === 'terms' ? '/terms' : '/privacy')}
                 className="w-auto lg:w-full text-start px-4 py-2 md:p-4 rounded-full md:rounded-3xl bg-white/5 border border-white/5 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] text-white/40 hover:bg-secondary/5"
               >
                 {item.label}

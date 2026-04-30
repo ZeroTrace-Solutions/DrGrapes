@@ -9,6 +9,7 @@ import StageIntro from '@/components/landingPage/StageIntro';
 import StageDiscovery from '@/components/landingPage/StageDiscovery';
 import StageMobile from '@/components/landingPage/StageMobile';
 import StageMission from '@/components/landingPage/StageMission';
+import { AnimatePresence } from 'framer-motion';
 
 const LandingPage = () => {
   const { i18n } = useTranslation();
@@ -179,7 +180,9 @@ const LandingPage = () => {
           <StageMobile scrollXProgress={scrollXProgress} />
         </div>
         <div className="flex-shrink-0 w-screen h-full overflow-hidden">
-          <StageMission scrollXProgress={scrollXProgress} />
+          <StageMission 
+            scrollXProgress={scrollXProgress} 
+          />
         </div>
       </div>
     </div>
