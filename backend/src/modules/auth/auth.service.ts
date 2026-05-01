@@ -1,7 +1,7 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDTO } from './dto/login/login.dto';
 import { UserManagementService } from '../user-management/user-management.service';
@@ -37,7 +37,7 @@ export class AuthService {
       : await this.userManagementService.findUserByUsername(dto.identifier);
 
     if (!user) {
-      throw new ForbiddenException('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await this.userManagementService.validatePassword(
@@ -46,7 +46,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new ForbiddenException('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     return new UserResponseDto(user);
