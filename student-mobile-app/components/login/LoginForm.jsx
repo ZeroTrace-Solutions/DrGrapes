@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginForm() {
   const router = useRouter();
+  const { login, isLoading } = useAuth();
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
-  const handleLogin = () => {
-    router.replace('/(tabs)');
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
+      router.replace('/(tabs)');
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   return (
@@ -25,6 +35,8 @@ export default function LoginForm() {
             className="flex-1 text-body-md text-white ml-sm"
             placeholder="Enter your credentials"
             placeholderTextColor="#52525b"
+            value={email}
+            onChangeText={setEmail}
             onFocus={() => setIsEmailFocused(true)}
             onBlur={() => setIsEmailFocused(false)}
           />
@@ -41,6 +53,8 @@ export default function LoginForm() {
             placeholder="••••••••"
             placeholderTextColor="#52525b"
             secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={setPassword}
             onFocus={() => setIsPasswordFocused(true)}
             onBlur={() => setIsPasswordFocused(false)}
           />
@@ -63,10 +77,15 @@ export default function LoginForm() {
       <View className="pt-sm">
         <TouchableOpacity 
           onPress={handleLogin}
-          className="w-full bg-primary-container h-14 rounded-full items-center justify-center shadow-lg"
+          disabled={isLoading}
+          className={`w-full ${isLoading ? 'bg-primary-container/50' : 'bg-primary-container'} h-14 rounded-full items-center justify-center shadow-lg`}
           style={{ shadowColor: '#c13584', shadowOpacity: 0.3, shadowRadius: 20, elevation: 5 }}
         >
-          <Text className="text-[18px] font-semibold text-on-primary-container">Login</Text>
+          {isLoading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text className="text-[18px] font-semibold text-on-primary-container">Login</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

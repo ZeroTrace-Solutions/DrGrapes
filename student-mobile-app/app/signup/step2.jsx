@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,11 +9,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SignupAction from '@/components/signup/SignupAction';
 import SignupHeader from '@/components/signup/SignupHeader';
 import SignupInput from '@/components/signup/SignupInput';
+import { useAuth } from '@/context/AuthContext';
 
 export default function SignupStep2() {
   const router = useRouter();
+  const { updateSignupData } = useAuth();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleContinue = () => {
+    updateSignupData({ password });
     router.push('/signup/step3');
   };
 
@@ -50,28 +55,24 @@ export default function SignupStep2() {
               {/* Form Section */}
               <View className="flex-1 gap-lg">
                 {/* Create Password */}
-                <View className="gap-sm">
-                  <Text className="text-xs font-bold tracking-widest text-on-surface-variant ml-4 uppercase">
-                    CREATE PASSWORD
-                  </Text>
-                  <SignupInput
-                    placeholder="••••••••••••"
-                    icon="key"
-                    isPassword={true}
-                  />
-                </View>
+                <SignupInput
+                  label="CREATE PASSWORD"
+                  placeholder="••••••••••••"
+                  icon="key"
+                  isPassword={true}
+                  value={password}
+                  onChangeText={setPassword}
+                />
 
                 {/* Confirm Password */}
-                <View className="gap-sm">
-                  <Text className="text-xs font-bold tracking-widest text-on-surface-variant ml-4 uppercase">
-                    CONFIRM PASSWORD
-                  </Text>
-                  <SignupInput
-                    placeholder="••••••••••••"
-                    icon="verified-user"
-                    isPassword={true}
-                  />
-                </View>
+                <SignupInput
+                  label="CONFIRM PASSWORD"
+                  placeholder="••••••••••••"
+                  icon="verified-user"
+                  isPassword={true}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
               </View>
 
               {/* Action Buttons */}

@@ -1,7 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View, Linking } from 'react-native';
+import { KeyboardAvoidingView, Linking, Platform, ScrollView, Text, View } from 'react-native';
 import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,11 +9,16 @@ import SignupAction from '@/components/signup/SignupAction';
 import SignupHeader from '@/components/signup/SignupHeader';
 import SignupInput from '@/components/signup/SignupInput';
 import SignupSocialButton from '@/components/signup/SignupSocialButton';
+import { useAuth } from '@/context/AuthContext';
+import { useState } from 'react';
+
 const TERMS_URL = "https://dr-grapes.ztsolutions.tech/terms";
 const PRIVACY_URL = "https://dr-grapes.ztsolutions.tech/privacy";
 
 export default function SignupStep1() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const { updateSignupData, resetSignupData } = useAuth();
   const { method } = useLocalSearchParams();
   const isGoogle = method === 'google';
 
@@ -23,10 +27,14 @@ export default function SignupStep1() {
   };
 
   const handleContinue = () => {
+    updateSignupData({ email, method: 'email' });
     router.push('/signup/step2');
   };
 
-  const handleGoogleSignup = () => {
+  const handleGoogleSignup = (platform) => {
+    console.log(`Signing up with ${platform}`);
+    resetSignupData();
+    updateSignupData({ method: 'google' });
     router.push('/signup/step4?method=google');
   };
 
@@ -71,6 +79,8 @@ export default function SignupStep1() {
                 placeholder="Enter your email"
                 icon="mail"
                 type="email"
+                value={email}
+                onChangeText={setEmail}
               />
 
               {/* Primary Action */}
@@ -79,13 +89,13 @@ export default function SignupStep1() {
                 footerText={
                   <Text>
                     By continuing, you agree to our{" "}
-                    <Text 
+                    <Text
                       onPress={() => openLink(TERMS_URL)}
                       className="text-primary-container font-medium"
                     >
                       Terms of Service
                     </Text> and{" "}
-                    <Text 
+                    <Text
                       onPress={() => openLink(PRIVACY_URL)}
                       className="text-primary-container font-medium"
                     >

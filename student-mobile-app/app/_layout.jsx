@@ -4,6 +4,7 @@ import "@/global.css";
 import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
 import { View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout() {
   const pathname = usePathname();
@@ -34,27 +35,29 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <View className="flex-1 bg-surface-dim">
-        <AmbientGlow />
+      <AuthProvider>
+        <View className="flex-1 bg-surface-dim">
+          <AmbientGlow />
 
-        {isSignupFlow && (
-          <SafeAreaView edges={['top']} className="px-md bg-transparent">
-            <SignupProgressBar
-              currentStep={displayStep}
-              totalSteps={totalSteps}
-              title={stepTitles[currentStep] || "SIGNUP"}
-            />
-          </SafeAreaView>
-        )}
+          {isSignupFlow && (
+            <SafeAreaView edges={['top']} className="px-md bg-transparent">
+              <SignupProgressBar
+                currentStep={displayStep}
+                totalSteps={totalSteps}
+                title={stepTitles[currentStep] || "SIGNUP"}
+              />
+            </SafeAreaView>
+          )}
 
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: 'slide_from_right',
-            contentStyle: { backgroundColor: 'transparent' }
-          }}
-        />
-      </View>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: 'slide_from_right',
+              contentStyle: { backgroundColor: 'transparent' }
+            }}
+          />
+        </View>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

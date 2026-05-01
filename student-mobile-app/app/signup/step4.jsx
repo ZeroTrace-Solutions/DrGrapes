@@ -10,9 +10,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SignupAction from '@/components/signup/SignupAction';
 import SignupHeader from '@/components/signup/SignupHeader';
 import SignupInput from '@/components/signup/SignupInput';
+import { useAuth } from '@/context/AuthContext';
 
 export default function SignupStep4() {
   const router = useRouter();
+  const { updateSignupData } = useAuth();
   const { method } = useLocalSearchParams();
   const isGoogle = method === 'google';
 
@@ -51,13 +53,18 @@ export default function SignupStep4() {
   };
 
   const handleContinue = () => {
-    // Basic validation could go here
+    updateSignupData({ fullName, dob, gender });
+    
     const params = new URLSearchParams({
       method: isGoogle ? 'google' : 'email',
       gender: gender || ''
     }).toString();
     
     router.push(`/signup/step5?${params}`);
+  };
+
+  const handlePrevious = () => {
+    router.back();
   };
 
   const genders = [
@@ -159,6 +166,7 @@ export default function SignupStep4() {
             >
               <SignupAction
                 onPress={handleContinue}
+                onPrevious={handlePrevious}
                 showArrow={true}
               />
             </View>

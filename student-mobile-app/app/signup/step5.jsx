@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View, Alert } from 'react-native';
 import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/context/AuthContext';
 
 // Components
 import SignupAction from '@/components/signup/SignupAction';
@@ -14,6 +15,7 @@ import SignupUsernameInput from '@/components/signup/SignupUsernameInput';
 
 export default function SignupStep5() {
   const router = useRouter();
+  const { updateSignupData } = useAuth();
   const { method, gender } = useLocalSearchParams();
   const isGoogle = method === 'google';
 
@@ -73,11 +75,17 @@ export default function SignupStep5() {
   };
 
   const handleContinue = () => {
+    updateSignupData({ username, profileImage: imageUri });
+    
     const params = new URLSearchParams({
       method: isGoogle ? 'google' : 'email',
       gender: gender || ''
     }).toString();
     router.push(`/signup/step6?${params}`);
+  };
+
+  const handlePrevious = () => {
+    router.back();
   };
 
   return (
@@ -136,6 +144,7 @@ export default function SignupStep5() {
             >
               <SignupAction
                 onPress={handleContinue}
+                onPrevious={handlePrevious}
                 showArrow={true}
               />
             </View>
