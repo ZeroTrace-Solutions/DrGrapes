@@ -1,10 +1,10 @@
-import AmbientGlow from "@/components/login/AmbientGlow";
-import SignupProgressBar from "@/components/signup/SignupProgressBar";
-import "@/global.css";
 import { Stack, useGlobalSearchParams, usePathname } from "expo-router";
 import { View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { AuthProvider } from "@/context/AuthContext";
+import AmbientGlow from "../components/login/AmbientGlow";
+import SignupProgressBar from "../components/signup/SignupProgressBar";
+import { AuthProvider } from "../context/AuthContext";
+import "../global.css";
 
 export default function RootLayout() {
   const pathname = usePathname();

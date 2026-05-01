@@ -26,7 +26,7 @@ export default function IntroScreen() {
         // Stay on intro for 2.5 seconds then navigate to login
         setTimeout(() => {
           router.replace('/(login)/login');
-        }, 2500);
+        }, 2100);
       } catch (e) {
         console.warn(e);
       }
