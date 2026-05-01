@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -16,7 +16,7 @@ export default function IntroScreen() {
       try {
         await new Promise(resolve => setTimeout(resolve, 500)); // Small buffer
         await SplashScreen.hideAsync();
-        
+
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 800,
@@ -25,7 +25,7 @@ export default function IntroScreen() {
 
         // Stay on intro for 2.5 seconds then navigate to login
         setTimeout(() => {
-          router.replace('/login');
+          router.replace('/(login)/login');
         }, 2500);
       } catch (e) {
         console.warn(e);
@@ -36,12 +36,12 @@ export default function IntroScreen() {
   }, []);
 
   return (
-    <View style={styles.container} className="bg-background">
+    <View style={styles.container} className="bg-transparent">
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
         {/* Main Logo */}
         <View style={styles.logoContainer}>
-          <Image 
-            source={require('../assets/images/dr-grapes-logo.png')} 
+          <Image
+            source={require('@/assets/images/dr-grapes-logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -51,8 +51,8 @@ export default function IntroScreen() {
         <View style={styles.footer}>
           <Text style={styles.fromText} className="text-on-surface-variant">from</Text>
           <View style={styles.brandingRow}>
-            <Image 
-              source={require('../assets/images/zt-solutions-icon.png')} 
+            <Image
+              source={require('@/assets/images/zt-solutions-icon.png')}
               style={styles.icon}
               resizeMode="contain"
             />

@@ -1,39 +1,37 @@
-import React from 'react';
-import { 
-  View, 
-  SafeAreaView, 
-  ScrollView, 
-  KeyboardAvoidingView, 
-  Platform,
-  StyleSheet
-} from 'react-native';
+import BrandingHeader from '@/components/login/BrandingHeader';
+import LoginForm from '@/components/login/LoginForm';
+import SignupFooter from '@/components/login/SignupFooter';
+import SocialLogin from '@/components/login/SocialLogin';
 import { StatusBar } from 'expo-status-bar';
-import AmbientGlow from '../components/auth/AmbientGlow';
-import BrandingHeader from '../components/auth/BrandingHeader';
-import LoginForm from '../components/auth/LoginForm';
-import SocialLogin from '../components/auth/SocialLogin';
-import SignupFooter from '../components/auth/SignupFooter';
-import DecorativeBento from '../components/auth/DecorativeBento';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
 
 export default function LoginScreen() {
   return (
-    <View style={styles.container} className="bg-background relative overflow-hidden">
+    <View style={styles.container} className="bg-transparent relative overflow-hidden">
       <StatusBar style="light" />
-      
-      {/* Background Decorations */}
-      <AmbientGlow />
 
       <SafeAreaView style={styles.flex1}>
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.flex1}
         >
-          <ScrollView 
+          <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* Wrapper to center content horizontally while allowing children to stretch */}
-            <View style={styles.contentWrapper}>
+            <Animated.View 
+              entering={SlideInRight.duration(400)}
+              exiting={SlideOutLeft.duration(300)}
+              style={styles.contentWrapper}
+            >
               {/* Branding Header */}
               <BrandingHeader />
 
@@ -46,9 +44,7 @@ export default function LoginScreen() {
               {/* Signup Footer */}
               <SignupFooter />
 
-              {/* Bottom Graphic (Decorative Element) */}
-              <DecorativeBento />
-            </View>
+            </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

@@ -11,8 +11,8 @@ export default function SignupFooter() {
         <Text className="text-[14px] text-on-surface-variant">
           Don't have an account? 
         </Text>
-        <TouchableOpacity onPress={() => router.push('/signup/step1')}>
-          <Text className="text-primary font-bold ml-xs"> Signup</Text>
+        <TouchableOpacity onPress={() => router.navigate('/signup/step1')}>
+          <Text className="text-primary font-bold ml-xs">Signup</Text>
         </TouchableOpacity>
       </View>
     </View>

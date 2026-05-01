@@ -1,23 +1,21 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withRepeat, 
-  withTiming, 
-  withSequence,
-  withDelay,
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
   Easing,
-  interpolate
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming
 } from 'react-native-reanimated';
-import AmbientGlow from '../../components/auth/AmbientGlow';
 
 export default function SignupSuccess() {
   const router = useRouter();
-  
+
   // Animation values
   const scale = useSharedValue(0.5);
   const opacity = useSharedValue(0);
@@ -28,7 +26,7 @@ export default function SignupSuccess() {
     // Initial entry animation
     scale.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.back(1.5)) });
     opacity.value = withTiming(1, { duration: 800 });
-    
+
     // Continuous bounce/pulse
     bounce.value = withRepeat(
       withSequence(
@@ -65,7 +63,7 @@ export default function SignupSuccess() {
   const animatedTextStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     transform: [
-      { 
+      {
         translateY: interpolate(
           opacity.value,
           [0, 1],
@@ -80,11 +78,8 @@ export default function SignupSuccess() {
   }));
 
   return (
-    <View className="flex-1 bg-surface-dim items-center justify-center relative overflow-hidden">
+    <View className="flex-1 bg-transparent items-center justify-center relative overflow-hidden">
       <StatusBar style="light" />
-      
-      {/* Decorative Glows */}
-      <AmbientGlow />
 
       {/* Main Content Bubble */}
       <View className="items-center text-center px-container-margin">
@@ -96,7 +91,7 @@ export default function SignupSuccess() {
         </Animated.View>
 
         {/* Text Cluster */}
-        <Animated.View 
+        <Animated.View
           style={animatedTextStyle}
           className="mt-xl gap-md items-center"
         >

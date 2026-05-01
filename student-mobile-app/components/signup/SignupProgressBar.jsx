@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 export default function SignupProgressBar({ currentStep = 1, totalSteps = 5, title = "JOIN THE CIRCLE" }) {
   return (
@@ -14,7 +14,7 @@ export default function SignupProgressBar({ currentStep = 1, totalSteps = 5, tit
       </View>
       <View className="flex-row gap-sm w-full">
         {Array.from({ length: totalSteps }).map((_, i) => (
-          <View 
+          <View
             key={i}
             className={`flex-1 h-1.5 rounded-full ${i < currentStep ? 'bg-primary-container' : 'bg-surface-container-highest'}`}
             style={i < currentStep ? { shadowColor: '#c13584', shadowOpacity: 0.4, shadowRadius: 10, elevation: 5 } : {}}

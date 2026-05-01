@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 export default function LevelPicker({ currentLevel = 3, onLevelSelect }) {
   const levels = [1, 2, 3, 4, 5];
 
   return (
     <View className="w-full gap-md">
-      <Text className="text-xs font-bold tracking-widest text-tertiary-fixed-dim uppercase">
+      <Text className="text-xs font-bold tracking-widest text-on-surface-variant uppercase">
         Academic Level
       </Text>
       <View className="flex-row justify-between items-center gap-sm">
