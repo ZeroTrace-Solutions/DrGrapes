@@ -32,6 +32,7 @@ model User {
   email           String    @unique
   password        String
   role            Role      @default(USER)
+  level           Int?      @default(1)
   DateOfBirth     DateTime
   gender          Gender
   profile_picture String?
@@ -39,6 +40,7 @@ model User {
   updatedAt       DateTime  @updatedAt
 
   userInfo        User_Info?
+  socialMediaAccounts SocialMediaAccount[]
 
   @@index([username])
   @@index([email])
@@ -50,19 +52,26 @@ model University {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  faculties  Faculty[]
   userInfos  User_Info[]
 }
 
 model Faculty {
   id        Int   @id @default(autoincrement())
   name      String
-  universityId Int
-  university   University @relation(fields: [universityId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   userInfos  User_Info[]
+}
+
+model SocialMediaProvider {
+  id        Int   @id @default(autoincrement())
+  name      String
+  url       String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  accounts   SocialMediaAccount[]
 }
 
 model User_Info {
@@ -70,7 +79,6 @@ model User_Info {
   userId      Int            @unique
   address     String?
   phoneNumber String?        @unique
-  level       Int            @default(1)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   universityId Int?
@@ -79,4 +87,16 @@ model User_Info {
   user        User          @relation(fields: [userId], references: [id])
   university   University?  @relation(fields: [universityId], references: [id])
   faculty      Faculty?     @relation(fields: [facultyId], references: [id])
+}
+
+model SocialMediaAccount {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  providerId Int
+  url       String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User              @relation(fields: [userId], references: [id])
+  provider  SocialMediaProvider @relation(fields: [providerId], references: [id])
 }
