@@ -117,15 +117,35 @@ export default function TabLayout() {
     );
 }
 
+import { useSegments } from 'expo-router';
+import { useEffect } from 'react';
+
 /**
  * Animated TabBar wrapper
  */
 function AnimatedTabBar(props) {
     const { translateY } = useTabBarVisibility();
+    const segments = useSegments();
+
+    // Check if we are in a sub-route (e.g. /bank/[moduleId])
+    // Main tabs are usually ['(tabs)'] or ['(tabs)', 'tabName']
+    const isSubRoute = segments.length > 2;
+
+    useEffect(() => {
+        if (isSubRoute) {
+            translateY.value = withTiming(120, { duration: 300 });
+        } else {
+            translateY.value = withTiming(0, { duration: 300 });
+        }
+    }, [isSubRoute]);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ translateY: translateY.value }],
     }));
+
+    if (isSubRoute) {
+        return null;
+    }
 
     return (
         <Animated.View style={[styles.animatedBarContainer, animatedStyle]}>
