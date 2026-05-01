@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { Gender, PrismaClient, Role } from 'generated/prisma/client';
 import * as bcrypt from 'bcrypt';
+import { Gender, PrismaClient, Role } from 'generated/prisma/client';
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL || '',
@@ -86,6 +86,8 @@ async function main() {
   const socialProvider =
     prisma.socialMediaProvider as unknown as SocialProviderDelegate;
 
+  const membershipLevel = 'MEMBERSHIP' as const;
+
   for (const provider of providers) {
     const existingProvider = await socialProvider.findFirst({
       where: { name: provider.name },
@@ -126,7 +128,7 @@ async function main() {
         email: adminEmail,
         password: hashedPassword,
         role: Role.ADMIN,
-        level: 99,
+        level: membershipLevel,
         DateOfBirth: new Date('1998-01-01T00:00:00Z'),
         gender: Gender.MALE,
         userInfo: {

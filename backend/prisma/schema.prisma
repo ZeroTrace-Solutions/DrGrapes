@@ -24,6 +24,17 @@ enum Gender {
   FEMALE
 }
 
+enum Level {
+  FIRST_YEAR
+  SECOND_YEAR
+  THIRD_YEAR
+  FOURTH_YEAR
+  FIFTH_YEAR
+  GRADUATED
+  POSTGRADUATED
+  MEMBERSHIP
+}
+
 
 model User {
   id              Int       @id @default(autoincrement())
@@ -32,7 +43,7 @@ model User {
   email           String    @unique
   password        String
   role            Role      @default(USER)
-  level           Int?      @default(1)
+  level           Level?    @default(FIRST_YEAR)
   DateOfBirth     DateTime
   gender          Gender
   profile_picture String?
