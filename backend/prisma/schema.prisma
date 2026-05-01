@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  SUPPLIER_DELIVERY
+  SUPPLIER_NO_DELIVERY
+  USER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+
+model User {
+  id              Int       @id @default(autoincrement())
+  full_name       String
+  username        String    @unique
+  email           String    @unique
+  password        String
+  role            Role      @default(USER)
+  DateOfBirth     DateTime
+  gender          Gender
+  profile_picture String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  userInfo        User_Info?
+
+  @@index([username])
+  @@index([email])
+}
+
+model University {
+  id        Int   @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  faculties  Faculty[]
+  userInfos  User_Info[]
+}
+
+model Faculty {
+  id        Int   @id @default(autoincrement())
+  name      String
+  universityId Int
+  university   University @relation(fields: [universityId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  userInfos  User_Info[]
+}
+
+model User_Info {
+  id          Int            @id @default(autoincrement())
+  userId      Int            @unique
+  address     String?
+  phoneNumber String?        @unique
+  level       Int            @default(1)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  universityId Int?
+  facultyId    Int?
+
+  user        User          @relation(fields: [userId], references: [id])
+  university   University?  @relation(fields: [universityId], references: [id])
+  faculty      Faculty?     @relation(fields: [facultyId], references: [id])
+}
