@@ -120,14 +120,14 @@
 
   /* Buttons */
   .btn-pill {
-    @apply rounded-full px-lg py-md font-bold active:scale-95;
+    @apply rounded-full px-lg py-md font-bold;
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .btn-primary {
-    @apply rounded-full px-lg py-md font-bold active:scale-95 bg-primary-container text-on-primary-container;
+    @apply rounded-full px-lg py-md font-bold bg-primary-container text-on-primary-container;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -135,7 +135,7 @@
   }
 
   .btn-secondary {
-    @apply rounded-full px-lg py-md font-bold active:scale-95 border-2 border-secondary-container text-secondary-container bg-transparent;
+    @apply rounded-full px-lg py-md font-bold border-2 border-secondary-container text-secondary-container bg-transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
