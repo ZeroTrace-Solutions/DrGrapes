@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { DatabaseModule } from '../database/database.module';
-import { MailModule } from 'src/common/mail/mail.module';
+import { MailModule } from '../../common/mail/mail.module';
 
 @Module({
   imports: [
