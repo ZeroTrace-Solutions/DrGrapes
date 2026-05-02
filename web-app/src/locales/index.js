@@ -6,15 +6,19 @@ import landingPageEn from './en/landingPage.json';
 import landingPageAr from './ar/landingPage.json';
 import legalEn from './en/legal.json';
 import legalAr from './ar/legal.json';
+import loginPageEn from './en/loginPage.json';
+import loginPageAr from './ar/loginPage.json';
 
 const resources = {
   en: {
     landingPage: landingPageEn,
     legal: legalEn,
+    loginPage: loginPageEn,
   },
   ar: {
     landingPage: landingPageAr,
     legal: legalAr,
+    loginPage: loginPageAr,
   },
 };
 
@@ -24,7 +28,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    ns: ['landingPage'],
+    ns: ['landingPage', 'loginPage'],
     defaultNS: 'landingPage',
     interpolation: {
       escapeValue: false, // react already safes from xss

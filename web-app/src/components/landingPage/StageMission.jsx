@@ -76,7 +76,7 @@ const StageMission = ({ scrollXProgress }) => {
             }}
             className="flex flex-col lg:flex-row items-center gap-3 md:gap-4"
           >
-            <img src={logo} alt="Dr. Grapes" className="w-auto h-8 md:h-12" />
+            <img src={logo} alt="Dr. Grapes" className="w-auto h-10 md:h-20" />
             <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase">{t('mission.title')}</h2>
           </motion.div>
           <div className="space-y-4 md:space-y-6">

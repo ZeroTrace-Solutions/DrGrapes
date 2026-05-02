@@ -17,19 +17,15 @@ const LegalLayout = ({ children, title, lastUpdated, type }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Background Decor */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/5 blur-[120px] rounded-full" />
-      </div>
+    <div className="min-h-screen text-foreground selection:bg-primary/30" dir={isRTL ? 'rtl' : 'ltr'}>
+
 
       <div className="max-w-4xl mx-auto px-6 py-20 md:py-32">
         {/* Navigation */}
         <motion.button
           initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
           animate={{ opacity: 1, x: 0 }}
-          onClick={() => navigate('/')}
+          onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-12 group"
         >
           <ArrowLeft className={`w-5 h-5 transition-transform ${isRTL ? 'rotate-180' : ''} group-hover:${isRTL ? 'translate-x-1' : '-translate-x-1'}`} />
