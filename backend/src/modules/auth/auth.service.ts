@@ -3,16 +3,23 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDTO } from './dto/login/login.dto';
+import { LoginDTO } from './dto/login.dto';
 import { UserManagementService } from '../user-management/user-management.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserResponseDto } from '../user-management/dto/user-dto/user-dto';
+import { MailService } from 'src/common/mail/mail.service';
+import { DatabaseService } from '../database/database.service';
+import { generateOTP } from 'src/common/utils/otp.util';
+import * as bcrypt from 'bcrypt';
+import { Purpose } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userManagementService: UserManagementService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+    private readonly prisma: DatabaseService,
   ) {}
 
   async validateUser(dto: LoginDTO): Promise<UserResponseDto> {
@@ -74,5 +81,20 @@ export class AuthService {
         expiresIn: '7d', // Long-lived refresh token
       }),
     };
+  }
+
+  async generateAndSendOTP(email: string, purpose: Purpose): Promise<boolean> {
+    const rowOTP = generateOTP();
+    const hashedOTP = await bcrypt.hash(rowOTP, 10);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+
+    await this.prisma.otp.deleteMany({ where: { email, purpose } });
+    await this.prisma.otp.create({
+      data: { email, code: hashedOTP, purpose, expiresAt },
+    });
+
+    await this.mailService.sendOtpEmail(email, rowOTP, purpose);
+
+    return true;
   }
 }

@@ -1,7 +1,7 @@
 import { Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { LoginResponseDTO } from './dto/login/login.dto';
+import { LoginResponseDTO } from './dto/login.dto';
 import { UserResponseDto } from '../user-management/dto/user-dto/user-dto';
 
 type AuthenticatedRequest = {
