@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Notification - DrGrapes</title>
+    <style>
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        border-collapse: collapse;
+      }
+      img {
+        border: 0;
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic;
+      }
+      body {
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+      a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
+      .btn:hover {
+        background-color: #0d36c3 !important;
+      }
+
+      @media screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+          border-radius: 0 !important;
+          border-left: 0 !important;
+          border-right: 0 !important;
+        }
+        .content-padding {
+          padding: 24px !important;
+        }
+        .header-padding {
+          padding: 32px 24px 16px 24px !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="
+      background-color: #121414;
+      margin: 0 !important;
+      padding: 0px 16px !important;
+      min-width: 100%;
+      font-family: &quot;Plus Jakarta Sans&quot;, Helvetica, Arial, sans-serif;
+      color: #e2e2e2;
+      -webkit-font-smoothing: antialiased;
+    "
+  >
+    <div
+      style="
+        display: none;
+        font-size: 1px;
+        color: #121414;
+        line-height: 1px;
+        max-height: 0px;
+        max-width: 0px;
+        opacity: 0;
+        overflow: hidden;
+      "
+    >
+      {{preheader}}
+    </div>
+
+    <table
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="background-color: #121414; margin-top: 32px; margin-bottom: 32px"
+    >
+      <tr>
+        <td align="center">
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="600"
+            class="container"
+            style="
+              max-width: 600px;
+              background-color: #1e2020;
+              border-radius: 16px;
+              border: 1px solid #282a2b;
+              overflow: hidden;
+              margin: 0 auto;
+            "
+          >
+            <tr>
+              <td
+                align="center"
+                class="header-padding"
+                style="padding: 40px 32px 24px 32px"
+              >
+                <a
+                  href="{{baseUrl}}"
+                  target="_blank"
+                  style="text-decoration: none"
+                >
+                  <img
+                    src="https://via.placeholder.com/150x40/121414/0d36c3?text=DrGrapes+Logo"
+                    alt="DrGrapes"
+                    width="150"
+                    style="display: block; border: 0"
+                  />
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td
+                align="left"
+                class="content-padding"
+                style="padding: 0 40px 40px 40px"
+              >
+                <h1
+                  style="
+                    margin: 0 0 20px 0;
+                    font-size: 20px;
+                    line-height: 28px;
+                    font-weight: 600;
+                    color: #ffffff;
+                  "
+                >
+                  {{notificationTitle}}
+                </h1>
+
+                <!-- Content block -->
+                <div
+                  style="
+                    background-color: #1a1c1c;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-bottom: 24px;
+                    border: 1px solid #282a2b;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0;
+                      font-size: 16px;
+                      line-height: 24px;
+                      color: #e2e2e2;
+                    "
+                  >
+                    {{notificationContent}}
+                  </p>
+                </div>
+
+                <!-- Optional Call to Action -->
+                <table
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  width="100%"
+                  style="margin-bottom: 24px"
+                >
+                  <tr>
+                    <td align="center">
+                      <table
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        role="presentation"
+                      >
+                        <tr>
+                          <!-- Using Royal Blue secondary theme color here for variation -->
+                          <td
+                            align="center"
+                            bgcolor="#0d36c3"
+                            style="border-radius: 9999px"
+                          >
+                            <a
+                              href="{{actionUrl}}"
+                              target="_blank"
+                              class="btn"
+                              style="
+                                display: inline-block;
+                                padding: 14px 32px;
+                                font-size: 16px;
+                                font-weight: bold;
+                                color: #ffffff;
+                                text-decoration: none;
+                                border-radius: 9999px;
+                              "
+                            >
+                              {{actionText}}
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <p
+                  style="
+                    margin: 0;
+                    font-size: 14px;
+                    line-height: 20px;
+                    color: #dcbfc9;
+                  "
+                >
+                  Best regards,<br />
+                  <strong>The DrGrapes Team</strong>
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="600"
+            class="container"
+            style="max-width: 600px"
+          >
+            <tr>
+              <td
+                align="center"
+                style="
+                  padding: 24px 20px;
+                  font-family:
+                    &quot;Plus Jakarta Sans&quot;, Helvetica, Arial, sans-serif;
+                  font-size: 12px;
+                  line-height: 18px;
+                  color: #564149;
+                "
+              >
+                <p style="margin: 0 0 10px 0">
+                  You are receiving this email to notify you of an important
+                  update.
+                </p>
+                <p style="margin: 0 0 10px 0">
+                  &copy; {{year}} DrGrapes. Powered by ZeroTrace Solutions. All rights reserved.
+                </p>
+                <p style="margin: 0">
+                  <a
+                    href="{{notificationsUrl}}"
+                    style="color: #a48a93; text-decoration: underline"
+                    >Manage Preferences</a
+                  >
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -21,6 +21,7 @@ export class UserResponseDto {
   role: Role;
   gender: Gender;
   level: string | null;
+  isEmailVerified?: boolean;
 
   constructor(user: User) {
     this.id = user.id;
@@ -30,7 +31,8 @@ export class UserResponseDto {
     this.profile_picture = user.profile_picture;
     this.role = user.role;
     this.gender = user.gender;
-    this.level = user.level as string | null;
+    this.level = user.level || null;
+    this.isEmailVerified = user.isEmailVerified;
   }
 }
 

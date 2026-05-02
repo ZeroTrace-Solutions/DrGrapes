@@ -1,5 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { SignUpStudentDto } from '../auth/dto/sign-up-dto/sign-up-dto';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
+import { SignUpStudentDto } from '../auth/dto/signup.dto';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../database/database.service';
 import { Role, User } from '@prisma/client';
@@ -8,46 +12,46 @@ import { Role, User } from '@prisma/client';
 export class UserManagementService {
   constructor(private readonly prisma: DatabaseService) {}
   async createStudent(dto: SignUpStudentDto): Promise<User> {
-    const { full_name, email, password, username } = dto;
+    const existingEmail = await this.findUserByEmail(dto.email);
 
-    if (dto.role !== Role.USER) {
-      throw new BadRequestException(
-        'Only students can be created with this endpoint',
+    if (existingEmail) {
+      if (existingEmail.isEmailVerified) {
+        throw new ConflictException('Email is already registered and verified');
+      }
+
+      throw new ConflictException(
+        'Email is already registered but not verified. Please verify your email or use a different one.',
       );
     }
 
-    if (!username || !email || !password || !full_name) {
-      throw new BadRequestException('All fields are required');
-    }
-
-    if (await this.findUserByEmail(email)) {
-      throw new BadRequestException('Email already in use');
-    }
-
-    if (await this.findUserByUsername(username)) {
-      throw new BadRequestException('Username already in use');
+    if (await this.findUserByUsername(dto.username)) {
+      throw new ConflictException('Username is already taken');
     }
 
     if (dto.phoneNumber) {
-      this.validatePhoneNumber(dto.phoneNumber);
+      await this.validatePhoneNumber(dto.phoneNumber);
     }
 
-    if (dto.DateOfBirth) {
-      this.validateDateOfBirth(dto.DateOfBirth);
+    if (dto.dateOfBirth) {
+      this.validateDateOfBirth(dto.dateOfBirth);
     }
 
-    await this.validateUniversity(dto.universityId);
-    await this.validateFaculty(dto.facultyId);
-    this.checkPasswordStrength(password);
-    const hashedPassword = await this.hashPassword(password);
+    await Promise.all([
+      this.validateUniversity(dto.universityId),
+      this.validateFaculty(dto.facultyId),
+    ]);
+
+    this.checkPasswordStrength(dto.password);
+    const hashedPassword = await this.hashPassword(dto.password);
 
     const user = await this.prisma.user.create({
       data: {
-        full_name,
-        email,
+        full_name: dto.full_name,
+        email: dto.email,
         password: hashedPassword,
-        username,
-        DateOfBirth: new Date(dto.DateOfBirth),
+        username: dto.username,
+        DateOfBirth: new Date(dto.dateOfBirth),
+        isEmailVerified: false,
         gender: dto.gender,
         role: Role.USER,
         level: dto.level,
@@ -60,6 +64,13 @@ export class UserManagementService {
       },
     });
     return user;
+  }
+
+  async markEmailAsVerified(email: string) {
+    return this.prisma.user.update({
+      where: { email },
+      data: { isEmailVerified: true },
+    });
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
@@ -122,12 +133,18 @@ export class UserManagementService {
     return true;
   }
 
-  private validatePhoneNumber(phoneNumber: string): boolean {
+  private async validatePhoneNumber(phoneNumber: string): Promise<void> {
     const phoneRegex = /^\+?[1-9][0-9]{7,14}$/;
     if (!phoneRegex.test(phoneNumber)) {
       throw new BadRequestException('Invalid phone number format');
     }
-    return true;
+
+    const existingUser = await this.prisma.user.findFirst({
+      where: { userInfo: { phoneNumber } },
+    });
+    if (existingUser) {
+      throw new ConflictException('Phone number is already in use');
+    }
   }
 
   private validateDateOfBirth(dateOfBirth: Date): boolean {

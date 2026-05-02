@@ -9,7 +9,8 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
-import { Gender, Role } from '@prisma/client';
+import { Gender } from '@prisma/client';
+import { Type } from 'class-transformer';
 
 const LEVEL_VALUES = [
   'FIRST_YEAR',
@@ -43,14 +44,12 @@ export class SignUpStudentDto {
   })
   password!: string;
 
-  @IsDate()
-  DateOfBirth!: Date;
+  @Type(() => Date)
+  @IsDate({ message: 'dateOfBirth must be a valid date' })
+  dateOfBirth!: Date;
 
   @IsEnum(Gender)
   gender!: Gender;
-
-  @IsEnum(Role)
-  role!: Role;
 
   @IsOptional()
   @IsIn(LEVEL_VALUES)

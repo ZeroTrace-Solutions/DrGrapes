@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>DrGrapes Email</title>
+    <style>
+      /* Reset & Client-Specific Overrides */
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        border-collapse: collapse;
+      }
+      img {
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+        -ms-interpolation-mode: bicubic;
+      }
+      body {
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+      a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+        font-size: inherit !important;
+        font-family: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+      }
+
+      /* Hover effects for clients that support it */
+      .btn:hover {
+        background-color: #ad2274 !important;
+      }
+      .text-link:hover {
+        text-decoration: none !important;
+        color: #ffafd2 !important;
+      }
+
+      /* Media query for mobile */
+      @media screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+          border-radius: 0 !important;
+        }
+        .content-padding {
+          padding: 24px !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="
+      background-color: #121414;
+      margin: 0 !important;
+      padding: 0px 16px !important;
+      min-width: 100%;
+      font-family: &quot;Plus Jakarta Sans&quot;, Helvetica, Arial, sans-serif;
+      color: #e2e2e2;
+      -webkit-font-smoothing: antialiased;
+    "
+  >
+    <!-- Preheader text (hidden) -->
+    <div
+      style="
+        display: none;
+        font-size: 1px;
+        color: #121414;
+        line-height: 1px;
+        max-height: 0px;
+        max-width: 0px;
+        opacity: 0;
+        overflow: hidden;
+      "
+    >
+      {{preheader}}
+    </div>
+
+    <table
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="background-color: #121414; margin-top: 32px; margin-bottom: 32px"
+    >
+      <tr>
+        <td align="center">
+          <!-- Main Email Container -->
+          <table
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="600"
+            class="container"
+            style="
+              background-color: #1e2020;
+              border-radius: 16px;
+              border: 1px solid #282a2b;
+              overflow: hidden;
+              margin: 0 auto;
+            "
+          >
+            <!-- Header Area -->
+            <tr>
+              <td align="center" style="padding: 40px 32px 20px 32px">
+                <a
+                  href="{{baseUrl}}"
+                  target="_blank"
+                  style="text-decoration: none"
+                >
+                  <!-- TODO: Replace with hosted absolute image URL -->
+                  <img
+                    src="https://via.placeholder.com/150x50/121414/ffafd2?text=DrGrapes+Logo"
+                    alt="DrGrapes Logo"
+                    width="150"
+                    style="
+                      display: block;
+                      border: 0;
+                      font-family: sans-serif;
+                      font-size: 20px;
+                      font-weight: bold;
+                      color: #ffafd2;
+                    "
+                  />
+                </a>
+              </td>
+            </tr>
+            <!-- Content Area (Starts here, closes in footer) -->
+            <tr>
+              <td
+                align="center"
+                class="content-padding"
+                style="padding: 0 40px 40px 40px; text-align: left"
+              ></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
