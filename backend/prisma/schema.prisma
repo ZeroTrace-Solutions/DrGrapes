@@ -37,6 +37,7 @@ enum Level {
 enum Purpose {
   SIGNUP
   FORGET_PASSWORD
+  CHANGE_PASSWORD
 }
 
 model User {

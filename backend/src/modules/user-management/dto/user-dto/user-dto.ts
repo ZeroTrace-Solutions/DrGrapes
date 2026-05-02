@@ -21,7 +21,8 @@ export class UserResponseDto {
   role: Role;
   gender: Gender;
   level: string | null;
-  isEmailVerified?: boolean;
+  isEmailVerified: boolean;
+  tokenVersion: number;
 
   constructor(user: User) {
     this.id = user.id;
@@ -33,6 +34,7 @@ export class UserResponseDto {
     this.gender = user.gender;
     this.level = user.level || null;
     this.isEmailVerified = user.isEmailVerified;
+    this.tokenVersion = user.tokenVersion;
   }
 }
 

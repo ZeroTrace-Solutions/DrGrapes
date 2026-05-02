@@ -11,10 +11,14 @@ import { MailService } from '../../common/mail/mail.service';
 import { DatabaseService } from '../database/database.service';
 import { generateOTP } from '../../common/utils/otp.util';
 import * as bcrypt from 'bcrypt';
-import { Otp, Purpose } from '@prisma/client';
+import { Otp, Purpose, User } from '@prisma/client';
 import { SignUpStudentDto } from './dto/signup.dto';
 import { VerifySignupDto } from './dto/verify-signup.dto';
 import { randomInt } from 'crypto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -146,13 +150,14 @@ export class AuthService {
     await this.userManagementService.markEmailAsVerified(email);
     await this.prisma.otp.delete({ where: { id: otpRecord.id } });
 
-    const user = await this.userManagementService.findUserByEmail(email);
+    const user: User | null =
+      await this.userManagementService.findUserByEmail(email);
 
     if (!user) {
       throw new BadRequestException('User not found for this email');
     }
 
-    const tokens = this.generateTokens(new UserResponseDto(user));
+    const tokens = await this.generateTokens(new UserResponseDto(user));
 
     await this.mailService.sendWelcomeEmail(email, user.full_name);
 
@@ -204,27 +209,38 @@ export class AuthService {
     return new UserResponseDto(user);
   }
 
-  generateTokens(user: UserResponseDto): {
+  async generateTokens(user: UserResponseDto): Promise<{
     accessToken: string;
     refreshToken: string;
-  } {
+  }> {
     const payload = {
       email: user.email,
       sub: user.id,
       role: user.role,
       username: user.username,
       level: String(user.level),
+      tokenVersion: user.tokenVersion,
     };
 
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '15m', // Short-lived access token
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+      expiresIn: '7d', // Long-lived refresh token
+    });
+
+    const hashedRt = await bcrypt.hash(refreshToken, 10);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { hashedRefreshToken: hashedRt },
+    });
+
     return {
-      accessToken: this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '15m', // Short-lived access token
-      }),
-      refreshToken: this.jwtService.sign(payload, {
-        secret: process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-        expiresIn: '7d', // Long-lived refresh token
-      }),
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -241,5 +257,127 @@ export class AuthService {
     await this.mailService.sendOtpEmail(email, rowOTP, purpose);
 
     return true;
+  }
+
+  async resendOtp(dto: ResendOtpDto) {
+    if (!dto.email) {
+      throw new BadRequestException('Email must be provided');
+    }
+
+    const user: User | null = await this.userManagementService.findUserByEmail(
+      dto.email,
+    );
+
+    if (!user) return { message: 'If the email exists, an OTP will be sent.' };
+
+    if (dto.purpose === Purpose.SIGNUP && user.isEmailVerified) {
+      throw new BadRequestException('Email is already verified.');
+    }
+
+    const lastOTP = await this.prisma.otp.findFirst({
+      where: { email: dto.email, purpose: dto.purpose },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (lastOTP && lastOTP.createdAt > new Date(Date.now() - 2 * 60 * 1000)) {
+      throw new BadRequestException(
+        'Please wait at least 2 minutes before requesting a new OTP.',
+      );
+    }
+
+    await this.generateAndSendOTP(dto.email, dto.purpose);
+    return { message: 'A new OTP has been sent.' };
+  }
+
+  async forgetPassword(dto: ForgetPasswordDto) {
+    const user: User | null = await this.userManagementService.findUserByEmail(
+      dto.email,
+    );
+    if (user) {
+      await this.generateAndSendOTP(dto.email, Purpose.FORGET_PASSWORD);
+    }
+    return { message: 'If the email exists, a reset code has been sent.' };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    const otpRecord = await this.prisma.otp.findFirst({
+      where: { email: dto.email, purpose: Purpose.FORGET_PASSWORD },
+    });
+
+    if (
+      !otpRecord ||
+      otpRecord.expiresAt < new Date() ||
+      !(await bcrypt.compare(dto.code, otpRecord.code))
+    ) {
+      if (otpRecord && otpRecord.expiresAt < new Date()) {
+        await this.prisma.otp.delete({ where: { id: otpRecord.id } });
+      }
+      throw new BadRequestException('Invalid or expired OTP.');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+    // Update password, increment tokenVersion (logs out all old devices), and clear OTP
+    const user = await this.prisma.user.update({
+      where: { email: dto.email },
+      data: {
+        password: hashedPassword,
+        tokenVersion: { increment: 1 },
+        hashedRefreshToken: null,
+      },
+    });
+    await this.prisma.otp.delete({ where: { id: otpRecord.id } });
+
+    await this.mailService.sendPasswordChangeNotification(
+      user.email,
+      user.full_name,
+    );
+
+    return { message: 'Password has been successfully reset. Please log in.' };
+  }
+
+  async changePassword(userId: number, dto: ChangePasswordDto) {
+    const user: User | null = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found.');
+    }
+
+    if (!(await bcrypt.compare(dto.oldPassword, user.password))) {
+      throw new BadRequestException('Incorrect old password.');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    await this.mailService.sendPasswordChangeNotification(
+      user.email,
+      user.full_name,
+    );
+
+    return { message: 'Password updated successfully.' };
+  }
+
+  async logout(userId: number) {
+    // Clear the refresh token to end the current session
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { hashedRefreshToken: null },
+    });
+    return { message: 'Logged out successfully.' };
+  }
+
+  async logoutAll(userId: number) {
+    // Increment tokenVersion to kill all active access tokens instantly
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { hashedRefreshToken: null, tokenVersion: { increment: 1 } },
+    });
+    return { message: 'Logged out from all devices.' };
   }
 }

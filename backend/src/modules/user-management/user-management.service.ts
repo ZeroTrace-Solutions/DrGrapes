@@ -139,7 +139,7 @@ export class UserManagementService {
       throw new BadRequestException('Invalid phone number format');
     }
 
-    const existingUser = await this.prisma.user.findFirst({
+    const existingUser: User | null = await this.prisma.user.findFirst({
       where: { userInfo: { phoneNumber } },
     });
     if (existingUser) {

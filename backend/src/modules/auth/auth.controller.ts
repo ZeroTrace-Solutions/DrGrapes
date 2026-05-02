@@ -14,6 +14,11 @@ import { LoginResponseDTO } from './dto/login.dto';
 import { UserResponseDto } from '../user-management/dto/user-dto/user-dto';
 import { SignUpStudentDto } from './dto/signup.dto';
 import { VerifySignupDto } from './dto/verify-signup.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 type AuthenticatedRequest = {
   user: UserResponseDto;
@@ -26,8 +31,8 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
-  login(@Request() req: AuthenticatedRequest) {
-    const tokens = this.authService.generateTokens(req.user);
+  async login(@Request() req: AuthenticatedRequest) {
+    const tokens = await this.authService.generateTokens(req.user);
 
     return new LoginResponseDTO(
       req.user,
@@ -65,5 +70,43 @@ export class AuthController {
       email,
     );
     return { usernames };
+  }
+
+  @Post('resend-otp')
+  async resendOtp(@Body() dto: ResendOtpDto) {
+    return this.authService.resendOtp(dto);
+  }
+
+  @Post('forget-password')
+  async forgetPassword(@Body() dto: ForgetPasswordDto) {
+    return this.authService.forgetPassword(dto);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
+  }
+
+  // --- AUTHENTICATED ROUTES (Requires Valid JWT) ---
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  async changePassword(
+    @Request() req: AuthenticatedRequest,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(req.user.id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Request() req: AuthenticatedRequest) {
+    return this.authService.logout(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout-all')
+  async logoutAll(@Request() req: AuthenticatedRequest) {
+    return this.authService.logoutAll(req.user.id);
   }
 }

@@ -44,6 +44,10 @@ export class MailService {
       subject = 'DrGrapes - Password Reset Request';
       text = `We received a request to reset your password. Your reset code is: ${otp}. If you did not request this, please ignore this email.`;
       templateName = 'reset-password.html';
+    } else if (purpose === 'CHANGE_PASSWORD') {
+      subject = 'DrGrapes - Password Change Request';
+      text = `We received a request to change your password. Your verification code is: ${otp}. If you did not request this, please ignore this email.`;
+      templateName = 'reset-password.html';
     }
 
     try {
@@ -93,6 +97,37 @@ export class MailService {
     }
   }
 
+  async sendPasswordChangeNotification(
+    to: string,
+    fullName: string,
+  ): Promise<boolean> {
+    const subject = 'Your DrGrapes Password Has Been Changed';
+    const text = `Hi ${fullName},\n\nThis is a notification that your DrGrapes account password was recently changed. If you did not make this change, please contact our support team immediately.\n\nBest regards,\nThe DrGrapes Team`;
+
+    try {
+      const html = this.renderTemplate('account-updated.html', {
+        firstName: fullName.split(' ')[0] || fullName,
+        updateType: 'Password Change Request',
+      });
+
+      await this.transporter.sendMail({
+        from: `"DrGrapes Support" <${process.env.SMTP_USER}>`,
+        to,
+        subject,
+        text,
+        html,
+      });
+      this.logger.log(`Password change notification sent to ${to}`);
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password change notification to ${to}:`,
+        error,
+      );
+      return false;
+    }
+  }
+
   private renderTemplate(
     templateName: string,
     values: Record<string, string>,
@@ -126,6 +161,9 @@ export class MailService {
     return {
       year: String(new Date().getFullYear()),
       baseUrl,
+      logoUrl:
+        process.env.LOGO_URL ??
+        'https://via.placeholder.com/150x50/121414/ffafd2?text=DrGrapes+Logo',
       supportUrl: process.env.SUPPORT_URL ?? `${baseUrl}/support`,
       privacyUrl: process.env.PRIVACY_URL ?? `${baseUrl}/privacy`,
       termsUrl: process.env.TERMS_URL ?? `${baseUrl}/terms`,

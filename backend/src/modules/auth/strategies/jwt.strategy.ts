@@ -1,6 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 type JwtPayload = {
   sub: number;
@@ -8,11 +9,12 @@ type JwtPayload = {
   role: string;
   username: string;
   level: string;
+  tokenVersion: number;
 };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly prisma: DatabaseService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -20,7 +22,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    // If user doesn't exist, or the token version doesn't match the DB, reject!
+    if (!user || user.tokenVersion !== payload.tokenVersion) {
+      throw new UnauthorizedException('Session expired. Please log in again.');
+    }
     return { id: payload.sub, email: payload.email };
   }
 }
