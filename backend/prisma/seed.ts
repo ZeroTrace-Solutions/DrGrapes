@@ -131,6 +131,9 @@ async function main() {
         level: membershipLevel,
         DateOfBirth: new Date('1998-01-01T00:00:00Z'),
         gender: Gender.MALE,
+        isEmailVerified: true,
+        hashedRefreshToken: null,
+        tokenVersion: 0,
         userInfo: {
           create: {
             address: 'Alexandria, Egypt',

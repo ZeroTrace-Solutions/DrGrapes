@@ -34,6 +34,10 @@ enum Level {
   MEMBERSHIP
 }
 
+enum Purpose {
+  SIGNUP
+  FORGET_PASSWORD
+}
 
 model User {
   id              Int       @id @default(autoincrement())
@@ -49,10 +53,29 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  isEmailVerified Boolean   @default(false)
+  hashedRefreshToken String?
+  tokenVersion     Int       @default(0)
+
   userInfo        User_Info?
   socialMediaAccounts SocialMediaAccount[]
+  otps            Otp[]
 
   @@index([username])
+  @@index([email])
+}
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  purpose   Purpose
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [email], references: [email])
+
   @@index([email])
 }
 
