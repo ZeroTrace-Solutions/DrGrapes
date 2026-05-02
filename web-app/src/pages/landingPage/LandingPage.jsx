@@ -11,9 +11,12 @@ import StageDiscovery from '@/components/landingPage/StageDiscovery';
 import StageMobile from '@/components/landingPage/StageMobile';
 import StageMission from '@/components/landingPage/StageMission';
 import { AnimatePresence } from 'framer-motion';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const isRTL = i18n.language === 'ar';
 
   const scrollRef = useRef(null);
@@ -35,6 +38,20 @@ const LandingPage = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Handle deep linking to stages from other pages (like login)
+  useEffect(() => {
+    if (location.state?.scrollToStage !== undefined) {
+      const stageIndex = location.state.scrollToStage;
+      // Small delay to ensure refs are ready
+      const timer = setTimeout(() => {
+        scrollToStage(stageIndex);
+        // Clear state to prevent re-triggering
+        navigate('/', { replace: true, state: {} });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state, navigate]);
 
   // Atmospheric Storytelling transforms (Moved to top level to avoid hook violations)
   const glow1X = useTransform(scrollXProgress, [0, 1], isRTL ? ['15%', '-40%'] : ['-15%', '40%']);
@@ -122,11 +139,17 @@ const LandingPage = () => {
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Dynamic primary glow (Magenta) - Reduced blur on mobile */}
         <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2, delay: 0.5 }}
           style={{ x: glow1X, y: glow1Y }}
           className={`absolute -top-[20%] -left-[10%] w-[100%] h-[100%] bg-primary/10 rounded-full ${isMobile ? 'blur-[80px] opacity-50' : 'blur-[180px]'}`}
         />
         {/* Dynamic secondary glow (Blue) - Reduced blur on mobile */}
         <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2, delay: 0.7 }}
           style={{ x: glow2X, y: glow2Y }}
           className={`absolute top-[30%] -right-[20%] w-[90%] h-[90%] bg-secondary/10 rounded-full ${isMobile ? 'blur-[80px] opacity-50' : 'blur-[180px]'}`}
         />

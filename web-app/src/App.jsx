@@ -6,6 +6,7 @@ import PrivacyPolicy from './pages/legal/DocPrivacy'
 import { SmoothScroll } from './components/ui/SmoothScroll'
 import Preloader from './components/landingPage/Preloader'
 import { AnimatePresence } from 'framer-motion'
+import LoginPage from './pages/loginPage/LoginPage'
 import { Toaster } from '@/components/ui/sonner'
 
 // Scroll to top on route change
@@ -36,12 +37,13 @@ function AppContent() {
   }, [loading]);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {loading ? (
         <Preloader key="preloader" />
       ) : (
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
@@ -50,14 +52,18 @@ function AppContent() {
   );
 }
 
+import { AuthProvider } from './context/AuthContext'
+
 function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <SmoothScroll>
-        <AppContent />
-      </SmoothScroll>
-      <Toaster position="top-center" expand={false} richColors />
+      <AuthProvider>
+        <ScrollToTop />
+        <SmoothScroll>
+          <AppContent />
+        </SmoothScroll>
+        <Toaster position="top-center" expand={false} richColors />
+      </AuthProvider>
     </Router>
   )
 }

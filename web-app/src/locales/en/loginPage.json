@@ -1,0 +1,22 @@
+{
+  "seo": {
+    "title": "Sign In | Dr. Grapes",
+    "description": "Login to your Dr. Grapes account to continue your medical journey."
+  },
+  "backHome": "Back Home",
+  "title": "Welcome Back",
+  "subtitle": "Enter your credentials to access your account",
+  "forgotPassword": "Forgot Password?",
+  "loginButton": "Sign In",
+  "noAccount": "Don't have an account?",
+  "register": "Join the journey",
+  "footer": {
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  },
+  "placeholders": {
+    "email": "Email address",
+    "password": "Password"
+  }
+}

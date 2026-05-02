@@ -5,10 +5,12 @@ import { RadialIntro } from '@/components/ui/radial-intro';
 import grapesIcon from '@/assets/dr-grapes-icon.png';
 import { Info, ShoppingCart, Smartphone, User, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const FloatingIcons = ({ onNavigate }) => {
   const { t, i18n } = useTranslation('landingPage');
   const [hoveredName, setHoveredName] = useState(null);
+  const navigate = useNavigate();
 
   const ITEMS = [
     {
@@ -42,8 +44,8 @@ const FloatingIcons = ({ onNavigate }) => {
       id: 4,
       name: t('common.hub.items.login'),
       src: User,
-      type: 'soon',
-      label: t('common.hub.items.login')
+      type: 'route',
+      path: '/login'
     },
     {
       id: 5,
@@ -57,6 +59,8 @@ const FloatingIcons = ({ onNavigate }) => {
   const handleItemClick = (item) => {
     if (item.type === 'internal' && onNavigate) {
       onNavigate(item.screen);
+    } else if (item.type === 'route') {
+      navigate(item.path);
     } else if (item.type === 'language') {
       const newLang = i18n.language === 'en' ? 'ar' : 'en';
       i18n.changeLanguage(newLang);

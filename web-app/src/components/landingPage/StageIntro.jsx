@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 const StageIntro = ({ scrollXProgress, onNavigate }) => {
   const { t } = useTranslation('landingPage');
-  
+
   // Local progress (Stage 0 of 4: range [0.0, 0.25])
   const localProgress = useTransform(scrollXProgress, [0, 0.25], [0, 1]);
 
@@ -24,16 +24,20 @@ const StageIntro = ({ scrollXProgress, onNavigate }) => {
       <div className="relative w-full max-w-6xl h-full flex items-center justify-center">
         {/* HERO CONTENT SECTION */}
         <motion.div
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ 
+            duration: 1.5, 
+            ease: [0.22, 1, 0.36, 1], // Organic ease
+            delay: 0.2 // Slight delay to let preloader bloom first
+          }}
           className="absolute inset-0 z-[100] flex flex-col justify-center items-center space-y-10 md:space-y-20 text-center px-6"
         >
           {/* LOGO - Mobile Only */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1 }}
+            initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            transition={{ delay: 0.8, duration: 1.2, type: "spring", damping: 15 }}
             className="md:hidden w-20 h-20 mb-2"
           >
             <img src={logo} alt="Dr. Grapes" className="w-full h-full object-contain" />
