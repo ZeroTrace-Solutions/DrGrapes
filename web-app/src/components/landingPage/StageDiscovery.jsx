@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { BookOpen, ShoppingBag, Users, Map, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import BlurText from '../ui/BlurText';
+import ScrollStack, { ScrollStackItem } from '../ui/ScrollStack';
 
 const DiscoveryCard = ({ feat, i, scrollXProgress }) => {
   // Individual card scroll entrance
@@ -38,50 +39,6 @@ const DiscoveryCard = ({ feat, i, scrollXProgress }) => {
       {/* Shimmer Effect */}
       <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
     </motion.div>
-  );
-};
-
-
-const DiscoveryMobileList = ({ features }) => {
-  return (
-    <div className="relative w-full h-full overflow-hidden">
-      <motion.div
-        animate={{
-          y: ["0%", "-50%"]
-        }}
-        transition={{
-          duration: 20,
-          ease: "linear",
-          repeat: Infinity
-        }}
-        className="flex flex-col gap-6 py-4"
-      >
-        {/* Duplicate the list to create a seamless infinite loop */}
-        {[...features, ...features].map((feat, i) => (
-          <div
-            key={i}
-            className={`relative overflow-hidden rounded-[32px] border border-outline-variant/20 p-8 flex flex-col justify-between bg-surface-container ${feat.accent.replace('bg-', 'border-')}/10 shadow-sm`}
-          >
-            <div className="space-y-4 relative z-10">
-              <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center border shadow-lg ${feat.iconBg}`}>
-                <feat.icon className="w-6 h-6" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-black tracking-tight leading-tight">{feat.title}</h3>
-                <p className="text-on-surface-variant text-xs leading-relaxed opacity-90">
-                  {feat.desc}
-                </p>
-              </div>
-            </div>
-            <div className={`absolute -right-16 -bottom-16 w-48 h-48 blur-[60px] rounded-full opacity-5 ${feat.accent}`} />
-          </div>
-        ))}
-      </motion.div>
-      
-      {/* VIGNETTE SHADOWS FOR SEAMLESS FEEL */}
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent z-20 pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
-    </div>
   );
 };
 
@@ -127,7 +84,7 @@ const StageDiscovery = ({ scrollXProgress }) => {
   ];
 
   return (
-    <section className="w-screen h-full flex flex-col items-center justify-center p-6 md:p-20 bg-transparent space-y-8 md:space-y-12">
+    <section className="w-full h-full flex flex-col items-center justify-center p-6 md:p-20 bg-transparent space-y-8 md:space-y-12 overflow-hidden">
       <motion.div
         style={{
           opacity: useTransform(localProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]),
@@ -158,8 +115,30 @@ const StageDiscovery = ({ scrollXProgress }) => {
         </motion.p>
       </motion.div>
 
-      <div className="block md:hidden w-full h-[60vh] pointer-events-none overflow-hidden relative">
-        <DiscoveryMobileList features={features} />
+      <div className="block md:hidden w-full max-w-full h-[60vh] overflow-hidden relative">
+        <ScrollStack 
+          baseScale={0.9} 
+          itemDistance={50} 
+          itemStackDistance={20}
+          className="h-full"
+        >
+          {features.map((feat, i) => (
+            <ScrollStackItem key={i} itemClassName={`p-8 flex flex-col justify-between bg-surface-container border border-outline-variant/20 shadow-xl !h-64 overflow-hidden`}>
+              <div className="space-y-4 relative z-10">
+                <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center border shadow-lg ${feat.iconBg}`}>
+                  <feat.icon className="w-6 h-6" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-black tracking-tight leading-tight">{feat.title}</h3>
+                  <p className="text-on-surface-variant text-xs leading-relaxed opacity-90">
+                    {feat.desc}
+                  </p>
+                </div>
+              </div>
+              <div className={`absolute -right-16 -bottom-16 w-48 h-48 blur-[60px] rounded-full opacity-5 ${feat.accent}`} />
+            </ScrollStackItem>
+          ))}
+        </ScrollStack>
       </div>
 
       {/* Desktop Grid */}

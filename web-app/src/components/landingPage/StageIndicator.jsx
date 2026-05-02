@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion, useTransform, useSpring } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
@@ -34,6 +34,44 @@ const StageItem = ({ stage, i, total, scrollProgress, onClick }) => {
 
 const StageIndicator = ({ scrollYProgress, onStageClick }) => {
   const { t, i18n } = useTranslation('landingPage');
+  const [showHint, setShowHint] = useState(false);
+  const isRTL = i18n.language === 'ar';
+  const showHintRef = useRef(false);
+  const idleTimerRef = useRef(null);
+
+  useEffect(() => {
+    const resetIdleTimer = () => {
+      if (showHintRef.current) {
+        setShowHint(false);
+        showHintRef.current = false;
+      }
+      
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      
+      idleTimerRef.current = setTimeout(() => {
+        setShowHint(true);
+        showHintRef.current = true;
+      }, 10000); // 10 seconds idle
+    };
+
+    // Events that indicate activity
+    const activityEvents = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'scroll'];
+    activityEvents.forEach(event => {
+      window.addEventListener(event, resetIdleTimer, { passive: true });
+    });
+
+    resetIdleTimer();
+
+    return () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, resetIdleTimer);
+      });
+    };
+  }, []);
+
   const stages = [
     t('common.stages.intro'),
     t('common.stages.discovery'),
@@ -47,14 +85,51 @@ const StageIndicator = ({ scrollYProgress, onStageClick }) => {
   const width = useTransform(springWidth, (val) => `${val}%`);
 
   return (
-    <div dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} className="fixed bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[90vw] md:max-w-2xl px-4 md:px-8">
-      <div className="relative h-1.5 bg-surface-container rounded-full overflow-hidden backdrop-blur-md border border-outline/10">
+    <div dir={isRTL ? 'rtl' : 'ltr'} className="fixed bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 w-full max-w-[90vw] md:max-w-2xl px-4 md:px-8 flex flex-col items-center">
+      {/* Mobile Scroll Hint */}
+      <AnimatePresence>
+        {showHint && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ 
+              opacity: [0.4, 0.8, 0.4],
+              x: isRTL ? [5, -5, 5] : [-5, 5, -5],
+              y: 0
+            }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="md:hidden flex flex-col items-center mb-4 space-y-1 opacity-60 pointer-events-none"
+          >
+            <span className="text-[8px] font-black uppercase tracking-[0.4em] text-white/40">
+              {isRTL ? 'اسحب للاستكشاف' : 'Swipe to Explore'}
+            </span>
+            <div className="flex items-center gap-8">
+              <motion.div animate={{ x: isRTL ? [2, -2, 2] : [-2, 2, -2] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className={`${isRTL ? '-rotate-90' : 'rotate-90'} opacity-40`}>
+                  <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </motion.div>
+              <motion.div animate={{ x: isRTL ? [-2, 2, -2] : [2, -2, 2] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className={`${isRTL ? 'rotate-90' : '-rotate-90'} opacity-40`}>
+                  <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="relative w-full h-1.5 bg-surface-container rounded-full overflow-hidden backdrop-blur-md border border-outline/10">
         <motion.div
           className="absolute h-full bg-gradient-to-r from-primary-container via-primary to-secondary-container shadow-[0_0_15px_rgba(193,53,132,0.5)]"
           style={{ width }}
         />
       </div>
-      <div className="flex justify-between mt-4 px-2">
+      <div className="flex justify-between w-full mt-4 px-2">
         {stages.map((stage, i) => (
           <StageItem
             key={stage}

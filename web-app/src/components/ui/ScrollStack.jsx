@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useCallback, forwardRef } from 'react';
+import { useLayoutEffect, useRef, useCallback, forwardRef, useState, useEffect } from 'react';
 import Lenis from 'lenis';
 
 export const ScrollStackItem = ({ children, itemClassName = '' }) => (
@@ -33,6 +33,14 @@ const ScrollStack = forwardRef(({
     const animationFrameRef = useRef(null);
     const lenisRef = useRef(null);
     const cardsRef = useRef([]);
+    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const lastTransformsRef = useRef(new Map());
     const isUpdatingRef = useRef(false);
 
@@ -192,6 +200,8 @@ const ScrollStack = forwardRef(({
     }, [updateCardTransforms]);
 
     const setupLenis = useCallback(() => {
+        if (window.innerWidth < 768) return null;
+
         if (useWindowScroll) {
             const lenis = new Lenis({
                 duration: 1.2,
@@ -272,7 +282,11 @@ const ScrollStack = forwardRef(({
             card.style.webkitPerspective = '1000px';
         });
 
-        setupLenis();
+        if (isMobile) {
+            scroller.addEventListener('scroll', handleScroll, { passive: true });
+        } else {
+            setupLenis();
+        }
 
         updateCardTransforms();
 
@@ -282,6 +296,9 @@ const ScrollStack = forwardRef(({
             }
             if (lenisRef.current) {
                 lenisRef.current.destroy();
+            }
+            if (isMobile && scroller) {
+                scroller.removeEventListener('scroll', handleScroll);
             }
             stackCompletedRef.current = false;
             cardsRef.current = [];
@@ -302,21 +319,22 @@ const ScrollStack = forwardRef(({
         onStackComplete,
         setupLenis,
         updateCardTransforms,
-        scrollerRef
+        scrollerRef,
+        isMobile
     ]);
 
     // Container styles based on scroll mode
     const containerStyles = useWindowScroll
         ? {
             // Global scroll mode - no overflow constraints
-            overscrollBehavior: 'contain',
+            touchAction: 'pan-x pan-y',
             WebkitOverflowScrolling: 'touch',
             WebkitTransform: 'translateZ(0)',
             transform: 'translateZ(0)'
         }
         : {
             // Container scroll mode - original behavior
-            overscrollBehavior: 'contain',
+            touchAction: 'pan-x pan-y',
             WebkitOverflowScrolling: 'touch',
             scrollBehavior: 'smooth',
             WebkitTransform: 'translateZ(0)',
@@ -326,7 +344,7 @@ const ScrollStack = forwardRef(({
 
     const containerClassName = useWindowScroll
         ? `relative w-full ${className}`.trim()
-        : `relative w-full h-full overflow-y-auto overflow-x-visible ${className}`.trim();
+        : `relative w-full h-full overflow-y-auto overflow-x-hidden ${className}`.trim();
 
     return (
         <div className={containerClassName} ref={scrollerRef} style={containerStyles}>

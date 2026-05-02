@@ -25,9 +25,15 @@ const TikTokIcon = ({ className }) => (
 );
 
 
+const YoutubeIcon = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+  </svg>
+);
 const StageMission = ({ scrollXProgress }) => {
   const { t, i18n } = useTranslation('landingPage');
   const navigate = useNavigate();
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Create local progress (Stage 3 of 4: range [0.75, 1.0])
   const localProgress = useTransform(scrollXProgress, [0.75, 1.0], [0, 1]);
@@ -47,7 +53,8 @@ const StageMission = ({ scrollXProgress }) => {
   const socialLinks = [
     { icon: InstagramIcon, label: t('mission.socials.instagram'), href: "https://www.instagram.com/drgrapes_?utm_source=qr&igsh=YTVpNnJsMXA2bHRm" },
     { icon: TikTokIcon, label: t('mission.socials.tiktok'), href: "https://www.tiktok.com/@drgrapes1?_r=1&_t=ZS-95ynW24LNiu" },
-    { icon: FacebookIcon, label: t('mission.socials.facebook'), href: "#" },
+    { icon: YoutubeIcon, label: t('mission.socials.youtube', 'YouTube'), href: "https://youtube.com/@dr.grapes?si=zw2UUwCv9xyPNXHH" },
+    { icon: FacebookIcon, label: t('mission.socials.facebook'), href: "https://www.facebook.com/profile.php?id=61589010305726" },
     { icon: Mail, label: t('mission.socials.email'), href: "mailto:drgrapes88@gmail.com" },
   ];
 
@@ -228,8 +235,12 @@ const StageMission = ({ scrollXProgress }) => {
           </div>
         </motion.div>
       </motion.div>
-      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[180px] rounded-full -z-10" />
-      <motion.div animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/10 blur-[180px] rounded-full -z-10" />
+      {!isMobile && (
+        <>
+          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[180px] rounded-full -z-10" />
+          <motion.div animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary/10 blur-[180px] rounded-full -z-10" />
+        </>
+      )}
     </section>
   );
 };

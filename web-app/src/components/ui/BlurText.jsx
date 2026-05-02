@@ -41,17 +41,31 @@ const BlurText = ({
     return () => observer.disconnect();
   }, [threshold, rootMargin]);
 
-  const defaultFrom = useMemo(() =>
-    direction === 'top' ? { filter: 'blur(10px)', opacity: 0, y: -50 } : { filter: 'blur(10px)', opacity: 0, y: 50 }, [direction]);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  const defaultTo = useMemo(() => [
-    {
-      filter: 'blur(5px)',
-      opacity: 0.5,
-      y: direction === 'top' ? 5 : -5
-    },
-    { filter: 'blur(0px)', opacity: 1, y: 0 }
-  ], [direction]);
+  const defaultFrom = useMemo(() => {
+    if (isMobile) {
+      return direction === 'top' ? { opacity: 0, y: -50 } : { opacity: 0, y: 50 };
+    }
+    return direction === 'top' ? { filter: 'blur(10px)', opacity: 0, y: -50 } : { filter: 'blur(10px)', opacity: 0, y: 50 };
+  }, [direction, isMobile]);
+
+  const defaultTo = useMemo(() => {
+    if (isMobile) {
+      return [
+        { opacity: 0.5, y: direction === 'top' ? 5 : -5 },
+        { opacity: 1, y: 0 }
+      ];
+    }
+    return [
+      {
+        filter: 'blur(5px)',
+        opacity: 0.5,
+        y: direction === 'top' ? 5 : -5
+      },
+      { filter: 'blur(0px)', opacity: 1, y: 0 }
+    ];
+  }, [direction, isMobile]);
 
   const fromSnapshot = animationFrom ?? defaultFrom;
   const toSnapshots = animationTo ?? defaultTo;

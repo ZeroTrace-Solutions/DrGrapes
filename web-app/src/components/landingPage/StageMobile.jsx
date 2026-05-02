@@ -51,12 +51,34 @@ const StageMobile = ({ scrollXProgress }) => {
   const phoneScale = useTransform(localProgress, [0.2, 0.4], [0.8, 1]);
   const phoneRotate = useTransform(localProgress, [0.2, 0.4], [-10, 0]);
 
-  const wireframes = [
-    { img: profile, x: -160, rotate: -15, mobileX: -100, mobileRotate: -12 },
-    { img: community, x: -80, rotate: -5, mobileX: -50, mobileRotate: -6 },
-    { img: questions, x: 80, rotate: 5, mobileX: 50, mobileRotate: 6 },
-    { img: activityHub, x: 160, rotate: 15, mobileX: 100, mobileRotate: 12 },
+  // Pre-calculate transforms to avoid nested useTransform in map
+  const frameX0 = useTransform(fanProgress, [0, 1], [0, isMobile ? -100 : -160]);
+  const frameRot0 = useTransform(fanProgress, [0, 1], [0, isMobile ? -12 : -15]);
+  const frameOp0 = useTransform(fanProgress, [0, 0.2], [0, 0.7]);
+
+  const frameX1 = useTransform(fanProgress, [0, 1], [0, isMobile ? -50 : -80]);
+  const frameRot1 = useTransform(fanProgress, [0, 1], [0, isMobile ? -6 : -5]);
+  const frameOp1 = useTransform(fanProgress, [0, 0.2], [0, 0.7]);
+
+  const frameX2 = useTransform(fanProgress, [0, 1], [0, isMobile ? 50 : 80]);
+  const frameRot2 = useTransform(fanProgress, [0, 1], [0, isMobile ? 6 : 5]);
+  const frameOp2 = useTransform(fanProgress, [0, 0.2], [0, 0.7]);
+
+  const frameX3 = useTransform(fanProgress, [0, 1], [0, isMobile ? 100 : 160]);
+  const frameRot3 = useTransform(fanProgress, [0, 1], [0, isMobile ? 12 : 15]);
+  const frameOp3 = useTransform(fanProgress, [0, 0.2], [0, 0.7]);
+
+  const frameTransforms = [
+    { x: frameX0, rotate: frameRot0, opacity: frameOp0, img: profile },
+    { x: frameX1, rotate: frameRot1, opacity: frameOp1, img: community },
+    { x: frameX2, rotate: frameRot2, opacity: frameOp2, img: questions },
+    { x: frameX3, rotate: frameRot3, opacity: frameOp3, img: activityHub },
   ];
+
+  const titleLine1Y = useTransform(localProgress, [0.25, 0.35], [50, 0]);
+  const titleLine1Op = useTransform(localProgress, [0.25, 0.35], [0, 1]);
+  const titleLine2Y = useTransform(localProgress, [0.3, 0.4], [50, 0]);
+  const titleLine2Op = useTransform(localProgress, [0.3, 0.4], [0, 1]);
 
   return (
     <section className="w-screen h-full flex items-center justify-center p-6 md:p-20 bg-transparent shrink-0">
@@ -64,16 +86,18 @@ const StageMobile = ({ scrollXProgress }) => {
         {/* Phones Area */}
         <div className="relative order-2 lg:order-1 flex justify-center items-center h-[350px] md:h-[700px] mt-8 lg:mt-0">
           <motion.div className="relative w-full h-full flex items-center justify-center group">
-            {wireframes.map((frame, i) => (
+            {frameTransforms.map((frame, i) => (
               <motion.div
                 key={i}
                 style={{
-                  x: useTransform(fanProgress, [0, 1], [0, isMobile ? frame.mobileX : frame.x]),
-                  rotate: useTransform(fanProgress, [0, 1], [0, isMobile ? frame.mobileRotate : frame.rotate]),
-                  opacity: useTransform(fanProgress, [0, 0.2], [0, 0.7]),
-                  scale: isMobile ? 0.6 : 0.9
+                  x: frame.x,
+                  rotate: frame.rotate,
+                  opacity: frame.opacity,
+                  scale: isMobile ? 0.6 : 0.9,
+                  transformPerspective: 1000,
+                  z: 0
                 }}
-                className="absolute z-10"
+                className="absolute z-10 will-change-transform"
               >
                 <MobileFrame bezelSize="6px" width={isMobile ? "220px" : "280px"} height={isMobile ? "440px" : "560px"}>
                   <img src={frame.img} className="w-full h-full object-cover" alt="" />
@@ -82,8 +106,13 @@ const StageMobile = ({ scrollXProgress }) => {
             ))}
 
             <motion.div
-              style={{ scale: phoneScale, rotate: phoneRotate }}
-              className="z-20 cursor-pointer"
+              style={{ 
+                scale: phoneScale, 
+                rotate: phoneRotate,
+                transformPerspective: 1000,
+                z: 0
+              }}
+              className="z-20 cursor-pointer will-change-transform"
               role="img"
               aria-label="Interactive mobile phone showing Dr. Grapes app home screen"
             >
@@ -93,7 +122,7 @@ const StageMobile = ({ scrollXProgress }) => {
               </MobileFrame>
             </motion.div>
 
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full -z-10" />
+            <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-primary/10 rounded-full -z-10 ${isMobile ? 'blur-[40px] opacity-40' : 'blur-[120px]'}`} />
           </motion.div>
         </div>
 
@@ -111,8 +140,8 @@ const StageMobile = ({ scrollXProgress }) => {
               <motion.span
                 className="block"
                 style={{
-                  y: useTransform(localProgress, [0.25, 0.35], [50, 0]),
-                  opacity: useTransform(localProgress, [0.25, 0.35], [0, 1])
+                  y: titleLine1Y,
+                  opacity: titleLine1Op
                 }}
               >
                 {t('mobile.titleLine1')}
@@ -120,8 +149,8 @@ const StageMobile = ({ scrollXProgress }) => {
               <motion.span
                 className="block text-transparent bg-clip-text bg-gradient-to-r from-secondary to-secondary-container mt-2"
                 style={{
-                  y: useTransform(localProgress, [0.3, 0.4], [50, 0]),
-                  opacity: useTransform(localProgress, [0.3, 0.4], [0, 1])
+                  y: titleLine2Y,
+                  opacity: titleLine2Op
                 }}
               >
                 {t('mobile.titleLine2')}

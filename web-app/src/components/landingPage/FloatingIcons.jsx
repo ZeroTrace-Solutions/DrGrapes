@@ -73,34 +73,36 @@ const FloatingIcons = ({ onNavigate }) => {
   return (
     <>
       {/* Desktop Hub */}
-      <div className="hidden md:block fixed bottom-0 right-0 z-[100] p-4 md:p-10 pointer-events-none">
-        <div className="relative flex items-center justify-center pointer-events-auto scale-75 md:scale-100 origin-bottom-right">
-          <RadialIntro
-            orbitItems={ITEMS}
-            stageSize={isMobile ? 280 : 350}
-            imageSize={isMobile ? 45 : 55}
-            onItemClick={handleItemClick}
-            onItemHover={(item) => setHoveredName(item.name)}
-            onItemHoverEnd={() => setHoveredName(null)}
-          />
+      {!isMobile && (
+        <div className="hidden md:block fixed bottom-0 right-0 z-[100] p-4 md:p-10 pointer-events-none">
+          <div className="relative flex items-center justify-center pointer-events-auto scale-75 md:scale-100 origin-bottom-right">
+            <RadialIntro
+              orbitItems={ITEMS}
+              stageSize={isMobile ? 280 : 350}
+              imageSize={isMobile ? 45 : 55}
+              onItemClick={handleItemClick}
+              onItemHover={(item) => setHoveredName(item.name)}
+              onItemHoverEnd={() => setHoveredName(null)}
+            />
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2 }}
-            className="absolute bottom-4 right-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/60 whitespace-nowrap flex flex-col items-end"
-          >
-            <motion.span
-              key={hoveredName || 'default'}
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-primary text-xs mb-1"
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2 }}
+              className="absolute bottom-4 right-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/60 whitespace-nowrap flex flex-col items-end"
             >
-              {hoveredName}
-            </motion.span>
-          </motion.div>
+              <motion.span
+                key={hoveredName || 'default'}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-primary text-xs mb-1"
+              >
+                {hoveredName}
+              </motion.span>
+            </motion.div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Mobile Standalone Language Toggle */}
       <motion.div 
