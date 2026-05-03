@@ -133,7 +133,7 @@ const DATA = {
 
 const AppSidebar = ({ hasActiveChats }) => {
   const isMobile = useIsMobile();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [activeContext, setActiveContext] = React.useState(DATA.contexts[0]);
 
   const isAdmin = user?.role === 'ADMIN';

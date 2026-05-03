@@ -18,14 +18,14 @@ const AdminLayout = () => {
       <ChatSidebar chats={activeChats} />
 
       {/* 2. Main Admin Sidebar System */}
-      <SidebarProvider>
+      <SidebarProvider className="h-full">
         <AppSidebar hasActiveChats={activeChats.length > 0} />
         
         {/* 3. Main Content Area - Inset design with unified surface */}
-        <SidebarInset className="flex flex-col bg-transparent relative">
+        <SidebarInset className="flex flex-col bg-transparent relative h-full min-h-0">
           <AdminHeader />
-          <div className="flex-1 overflow-auto p-4 md:p-8 custom-scrollbar">
-            <div className="max-w-7xl mx-auto space-y-8">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 show-scrollbar" data-lenis-prevent>
+            <div className="w-full h-full space-y-6 lg:space-y-8">
               <Outlet context={{ activeChats, setActiveChats }} />
             </div>
           </div>
