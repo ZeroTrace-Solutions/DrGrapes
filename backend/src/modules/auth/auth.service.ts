@@ -417,4 +417,18 @@ export class AuthService {
       );
     }
   }
+
+  async getAllUniversityNames(): Promise<{ id: number; name: string }[]> {
+    const universities = await this.prisma.university.findMany({
+      select: { id: true, name: true },
+    });
+    return universities;
+  }
+
+  async getAllFaculty(): Promise<{ id: number; name: string }[]> {
+    const faculties = await this.prisma.faculty.findMany({
+      select: { id: true, name: true },
+    });
+    return faculties;
+  }
 }

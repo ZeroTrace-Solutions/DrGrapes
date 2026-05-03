@@ -124,4 +124,14 @@ export class AuthController {
       tokens.refreshToken,
     );
   }
+
+  @Get('universities')
+  async getAllUniversityNames() {
+    return await this.authService.getAllUniversityNames();
+  }
+
+  @Get('faculties')
+  async getFacultiesByUniversity() {
+    return await this.authService.getAllFaculty();
+  }
 }
