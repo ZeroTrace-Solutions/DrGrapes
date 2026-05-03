@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 
-type JwtPayload = {
+export type JwtPayload = {
   sub: number;
   email: string;
   role: string;

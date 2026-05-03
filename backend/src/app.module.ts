@@ -7,6 +7,8 @@ import { DatabaseModule } from './modules/database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { MailModule } from './common/mail/mail.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 const TypedMailerModule = MailerModule as unknown as {
   forRoot: (options: {
@@ -48,8 +50,20 @@ const mailPort = Number(process.env.MAIL_PORT) || 587;
         },
       },
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -19,6 +19,7 @@ import { ResendOtpDto } from './dto/resend-otp.dto';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -379,5 +380,41 @@ export class AuthService {
       data: { hashedRefreshToken: null, tokenVersion: { increment: 1 } },
     });
     return { message: 'Logged out from all devices.' };
+  }
+
+  async refreshTokens(refreshToken: string) {
+    try {
+      const payload: JwtPayload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+      });
+
+      const userId = payload.sub;
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user || !user.hashedRefreshToken) {
+        throw new UnauthorizedException('Access denied');
+      }
+
+      const isRefreshTokenValid = await bcrypt.compare(
+        refreshToken,
+        user.hashedRefreshToken,
+      );
+
+      if (!isRefreshTokenValid) {
+        throw new UnauthorizedException('Access denied');
+      }
+
+      const tokens = await this.generateTokens(new UserResponseDto(user));
+
+      return { user, tokens };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      throw new UnauthorizedException(
+        'Invalid or expired refresh token. Please log in again.',
+      );
+    }
   }
 }

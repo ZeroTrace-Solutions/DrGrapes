@@ -19,6 +19,7 @@ import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 type AuthenticatedRequest = {
   user: UserResponseDto;
@@ -108,5 +109,19 @@ export class AuthController {
   @Post('logout-all')
   async logoutAll(@Request() req: AuthenticatedRequest) {
     return this.authService.logoutAll(req.user.id);
+  }
+
+  @Post('refresh')
+  async refresh(@Body() dto: RefreshDto) {
+    const { user, tokens } = await this.authService.refreshTokens(
+      dto.refreshToken,
+    );
+
+    // Return the exact same standardized DTO as your login endpoint
+    return new LoginResponseDTO(
+      new UserResponseDto(user),
+      tokens.accessToken,
+      tokens.refreshToken,
+    );
   }
 }
