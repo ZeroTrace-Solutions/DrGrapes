@@ -162,6 +162,16 @@ html[lang="ar"] * {
   --color-destructive: var(--error);
   --color-destructive-foreground: var(--on-error);
 
+  /* Sidebar Tokens */
+  --color-sidebar: var(--surface-container);
+  --color-sidebar-foreground: var(--on-surface);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--on-primary);
+  --color-sidebar-accent: var(--surface-container-highest);
+  --color-sidebar-accent-foreground: var(--on-surface);
+  --color-sidebar-border: var(--outline-variant);
+  --color-sidebar-ring: var(--ring);
+
   /* Transitions */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;

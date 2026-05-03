@@ -11,56 +11,65 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user is logged in on mount
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setAuthLoading(false);
-        return;
-      }
-
-      const { data, error } = await apiMutate(
-        '/auth/me',
-        'GET',
-        { showSuccessToast: false, showErrorToast: false }
-      );
-
-      if (data && !error) {
-        setAuthSession(data.user, token);
-      } else {
-        localStorage.removeItem('auth_token');
-        setUser(null);
+    const hydrateAuth = () => {
+      const accessToken = localStorage.getItem('access_token');
+      const savedUser = localStorage.getItem('user_data');
+      
+      if (accessToken && savedUser) {
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch (e) {
+          console.error('Failed to parse user data', e);
+          clearAuthSession();
+        }
       }
       setAuthLoading(false);
     };
 
-    checkAuth();
+    hydrateAuth();
   }, []);
 
-  const setAuthSession = (userData, token) => {
-    localStorage.setItem('auth_token', token);
+  const setAuthSession = (userData, accessToken, refreshToken) => {
+    localStorage.setItem('access_token', accessToken);
+    if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
+    localStorage.setItem('user_data', JSON.stringify(userData));
     setUser(userData);
+  };
+
+  const clearAuthSession = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_data');
+    setUser(null);
   };
 
   const login = async (email, password) => {
     const { data, error } = await apiMutate('/auth/login', 'POST', { identifier: email, password });
-    if (data && !error) {
-      setAuthSession(data.user, data.token);
-      return { data, error: null };
+    
+    // Structure based on USER_REQUEST: data.data.user, data.data.accessToken, etc.
+    // Note: useApi usually returns the response body directly in 'data'
+    const payload = data?.data || data;
+
+    if (payload?.accessToken && !error) {
+      setAuthSession(payload.user, payload.accessToken, payload.refreshToken);
+      return { data: payload, error: null };
     }
-    return { data: null, error };
+    return { data: null, error: error || 'Login failed' };
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    setUser(null);
+    clearAuthSession();
   };
 
   const value = {
     user,
+    role: user?.role || null,
     loading: authLoading,
     login,
     logout,
     isAuthenticated: !!user,
+    isAdmin: user?.role === 'ADMIN',
+    isSupplier: user?.role?.startsWith('SUPPLIER'),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
