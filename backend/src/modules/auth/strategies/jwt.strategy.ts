@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { DatabaseService } from 'src/modules/database/database.service';
+import { DatabaseService } from '../../database/database.service';
 
 export type JwtPayload = {
   sub: number;

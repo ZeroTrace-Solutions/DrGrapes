@@ -1,5 +1,5 @@
 import { IsString } from 'class-validator';
-import { UserResponseDto } from 'src/modules/user-management/dto/user-dto/user-dto';
+import { UserResponseDto } from '../../user-management/dto/user-dto/user-dto';
 
 export class LoginDTO {
   @IsString()

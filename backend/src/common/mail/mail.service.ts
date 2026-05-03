@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { existsSync, readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { join } from 'path';
 
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
   private readonly logger = new Logger(MailService.name);
   private readonly templateDirectories = [
-    resolve(process.cwd(), 'email-templates'),
-    resolve(process.cwd(), '..', 'email-templates'),
+    join(__dirname, 'email-templates'),
+    join(process.cwd(), 'src', 'common', 'mail', 'email-templates'),
   ];
 
   constructor() {
@@ -105,7 +105,7 @@ export class MailService {
     const text = `Hi ${fullName},\n\nThis is a notification that your DrGrapes account password was recently changed. If you did not make this change, please contact our support team immediately.\n\nBest regards,\nThe DrGrapes Team`;
 
     try {
-      const html = this.renderTemplate('account-updated.html', {
+      const html = this.renderTemplate('account-update.html', {
         firstName: fullName.split(' ')[0] || fullName,
         updateType: 'Password Change Request',
       });

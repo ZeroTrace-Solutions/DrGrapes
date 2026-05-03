@@ -92,6 +92,13 @@ export class UserManagementService {
     return bcrypt.compare(password, hashedPassword);
   }
 
+  async getUserProfile(userId: number): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    return user;
+  }
+
   private async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }

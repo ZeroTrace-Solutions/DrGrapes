@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="x-apple-disable-message-reformatting" />
-    <title>Welcome to DrGrapes!</title>
+    <title>Notification - DrGrapes</title>
     <style>
-      /* Reset & Client-Specific Overrides */
       body,
       table,
       td,
@@ -23,12 +22,9 @@
       }
       img {
         border: 0;
-        height: auto;
-        line-height: 100%;
         outline: none;
         text-decoration: none;
         -ms-interpolation-mode: bicubic;
-        border-radius: 8px;
       }
       body {
         height: 100% !important;
@@ -46,11 +42,7 @@
       }
 
       .btn:hover {
-        background-color: #ad2274 !important;
-      }
-      .text-link:hover {
-        text-decoration: none !important;
-        color: #ffafd2 !important;
+        background-color: #0d36c3 !important;
       }
 
       @media screen and (max-width: 600px) {
@@ -75,12 +67,11 @@
       margin: 0 !important;
       padding: 0px 16px !important;
       min-width: 100%;
-      font-family: &quot;Plus Jakarta Sans&quot;, Helvetica, Arial, sans-serif;
+      font-family: 'Plus Jakarta Sans', Helvetica, Arial, sans-serif;
       color: #e2e2e2;
       -webkit-font-smoothing: antialiased;
     "
   >
-    <!-- Preheader text -->
     <div
       style="
         display: none;
@@ -93,8 +84,7 @@
         overflow: hidden;
       "
     >
-      Welcome aboard! We are thrilled to have you part of the DrGrapes
-      community.
+      {{preheader}}
     </div>
 
     <table
@@ -106,7 +96,6 @@
     >
       <tr>
         <td align="center">
-          <!-- Card -->
           <table
             border="0"
             cellpadding="0"
@@ -134,7 +123,7 @@
                   style="text-decoration: none"
                 >
                   <img
-                    src="https://via.placeholder.com/150x40/121414/ffafd2?text=DrGrapes+Logo"
+                    src="https://res.cloudinary.com/dcrsvowmj/image/upload/v1777835911/icon_xf11x3.png"
                     alt="DrGrapes"
                     width="150"
                     style="display: block; border: 0"
@@ -151,38 +140,38 @@
                 <h1
                   style="
                     margin: 0 0 20px 0;
-                    font-size: 24px;
-                    line-height: 30px;
-                    font-weight: 700;
+                    font-size: 20px;
+                    line-height: 28px;
+                    font-weight: 600;
                     color: #ffffff;
                   "
                 >
-                  Welcome to DrGrapes!
+                  {{notificationTitle}}
                 </h1>
-                <p
-                  style="
-                    margin: 0 0 16px 0;
-                    font-size: 16px;
-                    line-height: 24px;
-                    color: #e2e2e2;
-                  "
-                >
-                  Hi {{firstName}},
-                </p>
-                <p
-                  style="
-                    margin: 0 0 24px 0;
-                    font-size: 16px;
-                    line-height: 24px;
-                    color: #dcbfc9;
-                  "
-                >
-                  We’re excited to have you on board. Discover new courses,
-                  connect with communities, and ace your goals directly from the
-                  platform designed for you.
-                </p>
 
-                <!-- Bulletproof Button -->
+                <!-- Content block -->
+                <div
+                  style="
+                    background-color: #1a1c1c;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin-bottom: 24px;
+                    border: 1px solid #282a2b;
+                  "
+                >
+                  <p
+                    style="
+                      margin: 0;
+                      font-size: 16px;
+                      line-height: 24px;
+                      color: #e2e2e2;
+                    "
+                  >
+                    {{notificationContent}}
+                  </p>
+                </div>
+
+                <!-- Optional Call to Action -->
                 <table
                   border="0"
                   cellpadding="0"
@@ -199,9 +188,10 @@
                         role="presentation"
                       >
                         <tr>
+                          <!-- Using Royal Blue secondary theme color here for variation -->
                           <td
                             align="center"
-                            bgcolor="#c13584"
+                            bgcolor="#0d36c3"
                             style="border-radius: 9999px"
                           >
                             <a
@@ -218,7 +208,7 @@
                                 border-radius: 9999px;
                               "
                             >
-                              Get Started
+                              {{actionText}}
                             </a>
                           </td>
                         </tr>
@@ -229,21 +219,10 @@
 
                 <p
                   style="
-                    margin: 0 0 16px 0;
-                    font-size: 16px;
-                    line-height: 24px;
-                    color: #dcbfc9;
-                  "
-                >
-                  If you have any questions or need assistance, feel free to
-                  reply to this email or reach out to our support team.
-                </p>
-                <p
-                  style="
                     margin: 0;
-                    font-size: 16px;
-                    line-height: 24px;
-                    color: #e2e2e2;
+                    font-size: 14px;
+                    line-height: 20px;
+                    color: #dcbfc9;
                   "
                 >
                   Best regards,<br />
@@ -253,7 +232,6 @@
             </tr>
           </table>
 
-          <!-- Footer -->
           <table
             border="0"
             cellpadding="0"
@@ -268,36 +246,25 @@
                 style="
                   padding: 24px 20px;
                   font-family:
-                    &quot;Plus Jakarta Sans&quot;, Helvetica, Arial, sans-serif;
+                    'Plus Jakarta Sans', Helvetica, Arial, sans-serif;
                   font-size: 12px;
                   line-height: 18px;
                   color: #564149;
                 "
               >
                 <p style="margin: 0 0 10px 0">
-                  You are receiving this email because you signed up for
-                  DrGrapes.
+                  You are receiving this email to notify you of an important
+                  update.
                 </p>
                 <p style="margin: 0 0 10px 0">
-                  &copy; {{year}} DrGrapes. Powered by ZeroTrace Solutions. All rights reserved.<br />
+                  &copy; {{year}} DrGrapes. Powered by ZeroTrace Solutions. All
+                  rights reserved.
                 </p>
                 <p style="margin: 0">
                   <a
-                    href="{{privacyUrl}}"
+                    href="{{notificationsUrl}}"
                     style="color: #a48a93; text-decoration: underline"
-                    >Privacy</a
-                  >
-                  &bull;
-                  <a
-                    href="{{termsUrl}}"
-                    style="color: #a48a93; text-decoration: underline"
-                    >Terms</a
-                  >
-                  &bull;
-                  <a
-                    href="{{unsubscribeUrl}}"
-                    style="color: #a48a93; text-decoration: underline"
-                    >Unsubscribe</a
+                    >Manage Preferences</a
                   >
                 </p>
               </td>
