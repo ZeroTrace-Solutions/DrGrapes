@@ -8,6 +8,9 @@ import Preloader from './components/landingPage/Preloader'
 import { AnimatePresence } from 'framer-motion'
 import LoginPage from './pages/loginPage/LoginPage'
 import { Toaster } from '@/components/ui/sonner'
+import { AuthProvider } from './context/AuthContext'
+import AdminLayout from './layouts/AdminLayout'
+import DashboardOverview from './pages/admin/DashboardOverview'
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -17,6 +20,9 @@ function ScrollToTop() {
   }, [pathname]);
   return null;
 }
+
+import ProtectedRoute from './components/auth/ProtectedRoute'
+import RoleRouter from './components/auth/RoleRouter'
 
 function AppContent() {
   const [loading, setLoading] = useState(() => {
@@ -46,13 +52,22 @@ function AppContent() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/router" element={<RoleRouter />} />
+          <Route path="/market" element={<div className="h-screen flex items-center justify-center bg-[#0c0f0f] text-foreground font-black text-4xl">MARKET PLACE</div>} />
+          
+          {/* Admin & Supplier Dashboard Routes - Protected */}
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPPLIER_DELIVERY', 'SUPPLIER_NO_DELIVERY']} />}>
+            <Route path="/dashboard" element={<AdminLayout />}>
+              <Route path="admin" element={<DashboardOverview />} />
+              <Route path="supplier/d" element={<DashboardOverview />} />
+              <Route path="supplier/nd" element={<DashboardOverview />} />
+            </Route>
+          </Route>
         </Routes>
       )}
     </AnimatePresence>
   );
 }
-
-import { AuthProvider } from './context/AuthContext'
 
 function App() {
   return (
@@ -68,5 +83,4 @@ function App() {
   )
 }
 
-export default App
-
+export default App;

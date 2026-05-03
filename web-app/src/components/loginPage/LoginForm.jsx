@@ -24,7 +24,7 @@ const LoginForm = () => {
     const { data, error } = await login(email, password);
 
     if (data && !error) {
-      navigate('/');
+      navigate('/router');
     }
     setLocalLoading(false);
   };
