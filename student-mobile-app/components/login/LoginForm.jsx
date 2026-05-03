@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInUp, FadeOutDown } from 'react-native-reanimated';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginForm() {
@@ -10,17 +11,20 @@ export default function LoginForm() {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleLogin = async () => {
-    try {
-      await login(email, password);
+    setError(null);
+    const { data, error: apiError } = await login(email, password);
+    
+    if (!apiError) {
       router.replace('/(tabs)');
-    } catch (e) {
-      alert(e.message);
+    } else {
+      setError(apiError);
     }
   };
 
@@ -68,8 +72,25 @@ export default function LoginForm() {
         </View>
       </View>
 
+      {/* Error Message */}
+      {error && (
+        <Animated.View 
+          entering={FadeInUp.duration(400)}
+          exiting={FadeOutDown.duration(300)}
+          className="bg-error/10 border border-error/20 rounded-xl p-md flex-row items-center gap-sm"
+        >
+          <MaterialIcons name="error-outline" size={18} color="#ffb4ab" />
+          <Text className="text-error text-xs font-medium flex-1">
+            {error}
+          </Text>
+        </Animated.View>
+      )}
+
       {/* Forgot Password */}
-      <TouchableOpacity className="items-end px-sm">
+      <TouchableOpacity 
+        onPress={() => router.push('/(login)/forgot-password')}
+        className="items-end px-sm"
+      >
         <Text className="text-[12px] font-bold tracking-widest text-secondary uppercase">Forgot Password?</Text>
       </TouchableOpacity>
 

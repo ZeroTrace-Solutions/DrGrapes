@@ -1,76 +1,146 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
+import { KeyboardAvoidingView, Platform, ScrollView, View, Alert, TouchableOpacity, Text } from 'react-native';
+import Animated, { SlideInRight, SlideOutLeft, FadeInUp, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '@/context/AuthContext';
 
 // Components
 import SignupAction from '@/components/signup/SignupAction';
 import SignupHeader from '@/components/signup/SignupHeader';
-import SignupInput from '@/components/signup/SignupInput';
-import { useAuth } from '@/context/AuthContext';
+import SignupPhotoUpload from '@/components/signup/SignupPhotoUpload';
+import SignupUsernameInput from '@/components/signup/SignupUsernameInput';
+import SignupError from '@/components/signup/SignupError';
 
 export default function SignupStep4() {
   const router = useRouter();
-  const { updateSignupData } = useAuth();
-  const { method } = useLocalSearchParams();
+  const { updateSignupData, signupData, suggestUsernames, checkUsername, isLoading } = useAuth();
+  const { method, gender } = useLocalSearchParams();
   const isGoogle = method === 'google';
 
-  const [fullName, setFullName] = useState('');
-  const [dob, setDob] = useState('');
-  const [gender, setGender] = useState(null);
+  const [username, setUsername] = useState(signupData.username || '');
+  const [isAvailable, setIsAvailable] = useState(true);
+  const [isChecking, setIsChecking] = useState(false);
+  const [isInitiallyLoading, setIsInitiallyLoading] = useState(true);
+  const [suggestions, setSuggestions] = useState([]);
+  const [imageUri, setImageUri] = useState(signupData.profileImage || null);
+  const [errors, setErrors] = useState({});
 
-  const handleDobChange = (text) => {
-    // Remove all non-numeric characters
-    let clean = text.replace(/[^0-9]/g, '');
-    
-    // Day logic: if first digit > 3, prefix with 0
-    if (clean.length === 1 && parseInt(clean[0]) > 3) {
-      clean = '0' + clean;
+  // Fetch suggestions on mount
+  React.useEffect(() => {
+    const fetchSuggestions = async () => {
+      const { data, error } = await suggestUsernames(signupData.fullName, signupData.email);
+      const usernames = data?.data?.usernames || [];
+      if (usernames && !error) {
+        setSuggestions(usernames);
+        if (usernames.length > 0) {
+          setUsername(usernames[0]);
+        }
+      }
+      setIsInitiallyLoading(false);
+    };
+    fetchSuggestions();
+  }, []);
+
+  // Check availability when username changes
+  React.useEffect(() => {
+    if (!username || username.length < 3) return;
+
+    const timeout = setTimeout(async () => {
+      setIsChecking(true);
+      setErrors({});
+      const { data, error: apiError } = await checkUsername(username);
+      const isAvailable = data?.data?.isAvailable || false;
+      if (!apiError) {
+        setIsAvailable(isAvailable);
+      } else {
+        setErrors({ username: apiError.message });
+      }
+      setIsChecking(false);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [username]);
+
+  const handlePickImage = async () => {
+    Alert.alert(
+      "Profile Photo",
+      "Choose a photo from your gallery or take a new one",
+      [
+        {
+          text: "Camera",
+          onPress: takePhoto,
+        },
+        {
+          text: "Gallery",
+          onPress: pickImage,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
     }
-    
-    // Month logic: 
-    // 1. If first digit of month (3rd char) > 1, prefix with 0
-    if (clean.length === 3 && parseInt(clean[2]) > 1) {
-      clean = clean.substring(0, 2) + '0' + clean[2];
-    }
-    // 2. If month starts with 1 but next digit > 2, it must be month 01 and next is year
-    if (clean.length === 4 && clean[2] === '1' && parseInt(clean[3]) > 2) {
-      clean = clean.substring(0, 2) + '01' + clean[3];
+  };
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert("Permission Denied", "We need camera access to take a profile photo.");
+      return;
     }
 
-    let formatted = clean;
-    if (clean.length > 2) {
-      formatted = clean.substring(0, 2) + ' / ' + clean.substring(2);
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
     }
-    if (clean.length > 4) {
-      formatted = formatted.substring(0, 7) + ' / ' + clean.substring(4, 8);
-    }
-    
-    setDob(formatted.substring(0, 14));
   };
 
   const handleContinue = () => {
-    updateSignupData({ fullName, dob, gender });
-    
+    const newErrors = {};
+    if (!username.trim()) newErrors.username = "Please choose a username";
+    if (!isAvailable) newErrors.username = "This username is already taken. Please try another one.";
+    if (username.length < 3) newErrors.username = "Username must be at least 3 characters long";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    updateSignupData({ username, profileImage: imageUri });
+
     const params = new URLSearchParams({
       method: isGoogle ? 'google' : 'email',
       gender: gender || ''
     }).toString();
-    
     router.push(`/signup/step5?${params}`);
   };
 
   const handlePrevious = () => {
     router.back();
   };
-
-  const genders = [
-    { id: 'male', label: 'Male', icon: 'male' },
-    { id: 'female', label: 'Female', icon: 'female' },
-  ];
 
   return (
     <View className="flex-1 bg-transparent relative overflow-hidden">
@@ -94,85 +164,63 @@ export default function SignupStep4() {
 
               {/* Header */}
               <SignupHeader
-                title="Personal Details"
-                description="Please provide your basic information to help us personalize your medical journey."
+                title="Choose your look"
+                description="Set up your profile identity. Your photo and username will be visible to the community."
               />
 
-              <View className="w-full gap-xl">
-                {/* Full Name */}
-                <SignupInput
-                  label="FULL NAME"
-                  placeholder="John Doe"
-                  icon="person"
-                  value={fullName}
-                  onChangeText={setFullName}
+              {/* Profile Photo */}
+              <SignupPhotoUpload
+                gender={gender}
+                imageUri={imageUri}
+                onPickImage={handlePickImage}
+              />
+
+              {/* Username Section */}
+              <View className="w-full gap-lg">
+                <SignupUsernameInput
+                  value={username}
+                  onChangeText={(val) => {
+                    setUsername(val);
+                    if (errors.username) setErrors(prev => ({ ...prev, username: null }));
+                  }}
+                  isAvailable={isAvailable}
+                  isLoading={isChecking}
+                  error={!!errors.username}
                 />
 
-                {/* Date of Birth */}
-                <SignupInput
-                  label="DATE OF BIRTH"
-                  placeholder="DD / MM / YYYY"
-                  icon="cake"
-                  value={dob}
-                  onChangeText={handleDobChange}
-                  keyboardType="number-pad"
-                  maxLength={14}
-                />
-
-                {/* Gender Selection */}
-                <View className="gap-md">
-                  <Text className="text-xs font-bold tracking-widest text-on-surface-variant uppercase ml-1">
-                    GENDER
-                  </Text>
-                  <View className="flex-row gap-sm">
-                    {genders.map((item) => {
-                      const isSelected = gender === item.id;
-                      return (
-                        <TouchableOpacity
-                          key={item.id}
-                          onPress={() => setGender(item.id)}
-                          style={{
-                            backgroundColor: isSelected ? '#c13584' : '#1e2020',
-                            borderColor: isSelected ? '#c13584' : '#262626',
-                            borderWidth: 2,
-                          }}
-                          className="flex-1 h-14 rounded-full flex-row items-center justify-center gap-xs"
-                        >
-                          <MaterialIcons
-                            name={item.icon}
-                            size={20}
-                            color={isSelected ? "white" : "#a48a93"}
-                          />
-                          <Text className={`font-bold ${isSelected ? 'text-white' : 'text-on-surface'}`}>
-                            {item.label}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
+                {suggestions.length > 0 && (
+                  <View className="flex-row flex-wrap gap-sm mt-2">
+                    {suggestions.map((s) => (
+                      <TouchableOpacity
+                        key={s}
+                        onPress={() => setUsername(s)}
+                        className="px-3 py-1.5 rounded-full border border-outline-variant bg-surface-container"
+                      >
+                        <Text className="text-xs font-medium text-primary">@{s}</Text>
+                      </TouchableOpacity>
+                    ))}
                   </View>
-                </View>
-              </View>
+                )}
 
+                {/* Error Message */}
+                <SignupError message={Object.values(errors).find(e => e)} />
+
+              </View>
             </ScrollView>
 
-            {/* Fixed Bottom Action Bar */}
-            <View
-              className="absolute bottom-0 left-0 right-0 p-container-margin pb-xl"
-              style={{
-                backgroundColor: 'rgba(18, 20, 20, 0.9)',
-                borderTopWidth: 1,
-                borderTopColor: 'rgba(255, 255, 255, 0.05)'
-              }}
-            >
+            {/* Fixed Action Bar at the bottom, outside ScrollView */}
+            <View className="px-container-margin pb-xl pt-md bg-surface">
               <SignupAction
                 onPress={handleContinue}
                 onPrevious={handlePrevious}
                 showArrow={true}
+                isLoading={isInitiallyLoading || isLoading}
               />
             </View>
           </Animated.View>
         </KeyboardAvoidingView>
       </SafeAreaView>
+
     </View>
   );
 }

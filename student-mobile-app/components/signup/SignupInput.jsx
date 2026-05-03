@@ -11,7 +11,8 @@ export default function SignupInput({
   onChangeText, 
   isPassword = false,
   keyboardType = "default",
-  maxLength
+  maxLength,
+  error = false
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +42,7 @@ export default function SignupInput({
         <TextInput
           style={{
             backgroundColor: '#1e2020',
-            borderColor: isFocused ? '#c13584' : '#564149',
+            borderColor: error ? '#ffb4ab' : (isFocused ? '#c13584' : '#564149'),
             borderWidth: 2,
             color: '#e2e2e2',
             paddingLeft: 56,

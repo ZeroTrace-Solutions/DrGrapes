@@ -1,87 +1,75 @@
-import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View, Alert } from 'react-native';
-import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
+import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import Animated, { SlideInRight, SlideOutLeft, FadeInUp, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '@/context/AuthContext';
 
 // Components
-import SignupAction from '@/components/signup/SignupAction';
+import LevelPicker from '@/components/signup/LevelPicker';
+import SearchablePicker from '@/components/signup/SearchablePicker';
 import SignupHeader from '@/components/signup/SignupHeader';
-import SignupPhotoUpload from '@/components/signup/SignupPhotoUpload';
-import SignupUsernameInput from '@/components/signup/SignupUsernameInput';
+import { useAuth } from '@/context/AuthContext';
+import SignupAction from '@/components/signup/SignupAction';
+import SignupError from '@/components/signup/SignupError';
 
 export default function SignupStep5() {
   const router = useRouter();
-  const { updateSignupData } = useAuth();
-  const { method, gender } = useLocalSearchParams();
+  const {
+    updateSignupData,
+    completeSignup,
+    getUniversities,
+    getFaculties,
+    isLoading,
+    signupData
+  } = useAuth();
+  const { method } = useLocalSearchParams();
   const isGoogle = method === 'google';
 
-  const [username, setUsername] = useState('iamjimmy');
-  const [imageUri, setImageUri] = useState(null);
+  const [universitiesList, setUniversitiesList] = useState([]);
+  const [facultiesList, setFacultiesList] = useState([]);
+  const [universityId, setUniversityId] = useState(signupData.universityId || '');
+  const [facultyId, setFacultyId] = useState(signupData.facultyId || '');
+  const [academicLevel, setAcademicLevel] = useState(signupData.academicLevel || 'FIRST_YEAR');
+  const [errors, setErrors] = useState({});
 
-  const handlePickImage = async () => {
-    Alert.alert(
-      "Profile Photo",
-      "Choose a photo from your gallery or take a new one",
-      [
-        {
-          text: "Camera",
-          onPress: takePhoto,
-        },
-        {
-          text: "Gallery",
-          onPress: pickImage,
-        },
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-      ]
-    );
-  };
+  // Fetch initial data
+  useEffect(() => {
+    const fetchData = async () => {
+      const [uRes, fRes] = await Promise.all([
+        getUniversities(),
+        getFaculties()
+      ]);
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
+      if (uRes.data) setUniversitiesList(uRes.data.data);
+      if (fRes.data) setFacultiesList(fRes.data.data);
+    };
+    fetchData();
+  }, []);
 
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
+  const handleFinalize = async () => {
+    const newErrors = {};
+    if (!universityId) newErrors.universityId = "Please select your university";
+    if (!facultyId) newErrors.facultyId = "Please select your faculty";
+    if (!academicLevel) newErrors.academicLevel = "Please select your academic level";
 
-  const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert("Permission Denied", "We need camera access to take a profile photo.");
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
+    // We update local context and pass the final data directly to avoid stale state issues
+    const finalSignupData = { ...signupData, universityId, facultyId, academicLevel };
+    updateSignupData({ universityId, facultyId, academicLevel });
+    setErrors({});
 
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+    const { data, error: apiError } = await completeSignup(finalSignupData);
+
+    if (!apiError) {
+      router.push('/signup/step6');
+    } else {
+      setErrors({ api: typeof apiError === 'string' ? apiError : (apiError.message || 'Signup failed') });
     }
-  };
-
-  const handleContinue = () => {
-    updateSignupData({ username, profileImage: imageUri });
-    
-    const params = new URLSearchParams({
-      method: isGoogle ? 'google' : 'email',
-      gender: gender || ''
-    }).toString();
-    router.push(`/signup/step6?${params}`);
   };
 
   const handlePrevious = () => {
@@ -89,7 +77,7 @@ export default function SignupStep5() {
   };
 
   return (
-    <View className="flex-1 bg-transparent relative overflow-hidden">
+    <View style={{ flex: 1 }} className="flex-1 bg-transparent relative overflow-hidden">
       <StatusBar style="light" />
 
       <SafeAreaView style={{ flex: 1 }} className="flex-1">
@@ -104,53 +92,70 @@ export default function SignupStep5() {
             style={{ flex: 1 }}
           >
             <ScrollView
-              contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 100 }}
+              contentContainerStyle={{ flexGrow: 1, padding: 20, paddingBottom: 120 }}
               showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
             >
-
               {/* Header */}
               <SignupHeader
-                title="Choose your look"
-                description="Set up your profile identity. Your photo and username will be visible to the community."
+                title="Academic Background"
+                description="Help us personalize your experience by providing your academic details."
               />
 
-              {/* Profile Photo */}
-              <SignupPhotoUpload 
-                gender={gender} 
-                imageUri={imageUri}
-                onPickImage={handlePickImage}
-              />
-
-              {/* Username Section */}
-              <View className="w-full gap-lg">
-                <SignupUsernameInput
-                  value={username}
-                  onChangeText={setUsername}
-                  isAvailable={true}
+              <View className="w-full gap-xl">
+                {/* University Searchable Picker */}
+                <SearchablePicker
+                  label="Select University"
+                  placeholder="Search university..."
+                  value={universityId}
+                  items={universitiesList}
+                  onSelect={(id) => {
+                    setUniversityId(id);
+                    if (errors.universityId) setErrors(prev => ({ ...prev, universityId: null }));
+                  }}
+                  zIndex={2}
+                  error={!!errors.universityId}
                 />
 
-              </View>
+                {/* Faculty Searchable Picker */}
+                <SearchablePicker
+                  label="Select Faculty"
+                  placeholder="Search faculty..."
+                  value={facultyId}
+                  items={facultiesList}
+                  onSelect={(id) => {
+                    setFacultyId(id);
+                    if (errors.facultyId) setErrors(prev => ({ ...prev, facultyId: null }));
+                  }}
+                  zIndex={1}
+                  error={!!errors.facultyId}
+                />
 
+                {/* Academic Level */}
+                <LevelPicker
+                  currentLevel={academicLevel}
+                  onLevelSelect={setAcademicLevel}
+                />
+
+                {/* Error Message */}
+                <SignupError message={Object.values(errors).find(e => e)} />
+              </View>
             </ScrollView>
 
-            {/* Fixed Bottom Action Bar */}
-            <View
-              className="absolute bottom-0 left-0 right-0 p-container-margin pb-xl"
-              style={{
-                backgroundColor: 'rgba(18, 20, 20, 0.9)',
-                borderTopWidth: 1,
-                borderTopColor: 'rgba(255, 255, 255, 0.05)'
-              }}
-            >
+            {/* Fixed Action Bar at the bottom, outside ScrollView */}
+            <View className="px-container-margin pb-xl pt-md bg-surface">
               <SignupAction
-                onPress={handleContinue}
+                onPress={handleFinalize}
                 onPrevious={handlePrevious}
-                showArrow={true}
+                label="Finalize Setup"
+                showArrow={false}
+                isLoading={isLoading}
               />
             </View>
           </Animated.View>
         </KeyboardAvoidingView>
       </SafeAreaView>
+
     </View>
   );
 }

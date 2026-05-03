@@ -58,5 +58,15 @@ export const createAuthApi = (apiClient) => ({
   // 11. Refresh Access Token
   refreshAccessToken: async (refreshToken) => {
     return await apiClient.post('/auth/refresh', { refreshToken });
+  },
+
+  // 12. Get Universities
+  getUniversities: async () => {
+    return await apiClient.get('/auth/universities');
+  },
+
+  // 13. Get Faculties
+  getFaculties: async (universityId) => {
+    return await apiClient.get(`/auth/faculties`);
   }
 });

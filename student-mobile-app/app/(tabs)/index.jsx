@@ -88,7 +88,7 @@ export default function FeedScreen() {
           </View>
 
           <QuizCard 
-            icon="brain"
+            icon="school"
             module="Module 4"
             title="Neuroscience Basics"
             progress={0.6}

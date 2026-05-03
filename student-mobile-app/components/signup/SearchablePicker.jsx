@@ -2,17 +2,28 @@ import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-export default function SearchablePicker({ label, placeholder, value, onSelect, items = [], zIndex = 0 }) {
+export default function SearchablePicker({ label, placeholder, value, onSelect, items = [], zIndex = 0, error = false }) {
   const [isFocused, setIsFocused] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(value);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [filteredItems, setFilteredItems] = useState(items);
 
+  // Sync searchQuery with external value name if it's an object ID
+  useEffect(() => {
+    if (value) {
+      const selectedItem = items.find(item => (item.id === value || item === value));
+      if (selectedItem) {
+        setSearchQuery(selectedItem.name || selectedItem);
+      }
+    }
+  }, [value, items]);
+
   useEffect(() => {
     if (searchQuery) {
-      const filtered = items.filter(item =>
-        item.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const filtered = items.filter(item => {
+        const name = item.name || item;
+        return name.toLowerCase().includes(searchQuery.toLowerCase());
+      });
       setFilteredItems(filtered);
     } else {
       setFilteredItems(items);
@@ -20,8 +31,10 @@ export default function SearchablePicker({ label, placeholder, value, onSelect, 
   }, [searchQuery, items]);
 
   const handleSelect = (item) => {
-    setSearchQuery(item);
-    onSelect(item);
+    const name = item.name || item;
+    const id = item.id || item;
+    setSearchQuery(name);
+    onSelect(id);
     setShowDropdown(false);
     setIsFocused(false);
   };
@@ -40,7 +53,7 @@ export default function SearchablePicker({ label, placeholder, value, onSelect, 
         <TextInput
           style={{
             backgroundColor: '#1e2020',
-            borderColor: isFocused ? '#c13584' : '#262626',
+            borderColor: error ? '#ffb4ab' : (isFocused ? '#c13584' : '#262626'),
             borderWidth: 2,
             color: '#e2e2e2',
             paddingLeft: 48,
@@ -87,17 +100,22 @@ export default function SearchablePicker({ label, placeholder, value, onSelect, 
               nestedScrollEnabled={true}
               keyboardShouldPersistTaps="handled"
             >
-              {filteredItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handleSelect(item)}
-                  className={`px-lg py-md border-b border-white/5 ${value === item ? 'bg-primary-container/20' : ''}`}
-                >
-                  <Text className={`text-base ${value === item ? 'text-primary-container font-bold' : 'text-on-surface'}`}>
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {filteredItems.map((item, index) => {
+                const name = item.name || item;
+                const id = item.id || item;
+                const isSelected = value === id;
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => handleSelect(item)}
+                    className={`px-lg py-md border-b border-white/5 ${isSelected ? 'bg-primary-container/20' : ''}`}
+                  >
+                    <Text className={`text-base ${isSelected ? 'text-primary-container font-bold' : 'text-on-surface'}`}>
+                      {name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
           </View>
         )}

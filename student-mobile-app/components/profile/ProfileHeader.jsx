@@ -15,11 +15,15 @@ export default function ProfileHeader({ name, university, level, avatarUrl }) {
       borderColor: 'rgba(255,255,255,0.03)'
     }}>
       <View style={{ position: 'relative' }}>
-         <View style={{ width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: '#c13584', padding: 2 }}>
-            <Image 
-              source={{ uri: avatarUrl || 'https://i.pravatar.cc/150' }} 
-              style={{ width: '100%', height: '100%', borderRadius: 40 }}
-            />
+         <View style={{ width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: '#c13584', padding: 2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+            {avatarUrl ? (
+              <Image 
+                source={{ uri: avatarUrl }} 
+                style={{ width: '100%', height: '100%', borderRadius: 40 }}
+              />
+            ) : (
+              <Ionicons name="person" size={40} color="#dcbfc9" />
+            )}
          </View>
          <View style={{ 
            position: 'absolute', 
