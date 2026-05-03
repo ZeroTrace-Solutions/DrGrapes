@@ -21,7 +21,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { RefreshDto } from './dto/refresh.dto';
 
-type AuthenticatedRequest = {
+export type AuthenticatedRequest = {
   user: UserResponseDto;
 };
 
@@ -75,17 +75,17 @@ export class AuthController {
 
   @Post('resend-otp')
   async resendOtp(@Body() dto: ResendOtpDto) {
-    return this.authService.resendOtp(dto);
+    return await this.authService.resendOtp(dto);
   }
 
   @Post('forget-password')
   async forgetPassword(@Body() dto: ForgetPasswordDto) {
-    return this.authService.forgetPassword(dto);
+    return await this.authService.forgetPassword(dto);
   }
 
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(dto);
+    return await this.authService.resetPassword(dto);
   }
 
   // --- AUTHENTICATED ROUTES (Requires Valid JWT) ---
@@ -96,19 +96,19 @@ export class AuthController {
     @Request() req: AuthenticatedRequest,
     @Body() dto: ChangePasswordDto,
   ) {
-    return this.authService.changePassword(req.user.id, dto);
+    return await this.authService.changePassword(req.user.id, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Request() req: AuthenticatedRequest) {
-    return this.authService.logout(req.user.id);
+    return await this.authService.logout(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout-all')
   async logoutAll(@Request() req: AuthenticatedRequest) {
-    return this.authService.logoutAll(req.user.id);
+    return await this.authService.logoutAll(req.user.id);
   }
 
   @Post('refresh')
