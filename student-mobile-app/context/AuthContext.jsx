@@ -36,14 +36,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === '(login)' || segments[0] === 'signup';
+    const inAuthGroup = segments[0] === '(login)' || segments[0] === 'signup' || segments[0] === 'index';
+    const isUserAuthenticated = !!user;
 
-    if (!user && !inAuthGroup) {
+    if (!isUserAuthenticated && !inAuthGroup) {
       // Redirect to login if not authenticated and trying to access protected routes
-      // router.replace('/(login)/login'); // Uncomment when ready for full protection
-    } else if (user && inAuthGroup) {
-      // Redirect to home if authenticated and trying to access auth routes
-      // router.replace('/(tabs)');
+      router.replace('/(login)/login');
+    } else if (isUserAuthenticated && inAuthGroup) {
+      // Redirect to home if authenticated and trying to access auth/intro routes
+      router.replace('/(tabs)');
     }
   }, [user, segments, isLoading]);
 
