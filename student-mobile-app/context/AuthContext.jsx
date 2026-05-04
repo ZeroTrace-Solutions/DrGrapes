@@ -58,7 +58,11 @@ export function AuthProvider({ children }) {
         const payload = data?.data || data;
 
         if (payload && !error) {
-          setUser(payload);
+          if (payload.role !== 'USER') {
+            await clearAuthSession();
+          } else {
+            setUser(payload);
+          }
         } else {
           await clearAuthSession();
         }
@@ -90,6 +94,9 @@ export function AuthProvider({ children }) {
       const payload = data?.data || data;
 
       if (payload?.accessToken && !error) {
+        if (payload.user?.role !== 'USER') {
+          return { data: null, error: 'Your email is not authorized for this portal' };
+        }
         await setAuthSession(payload.user, payload.accessToken, payload.refreshToken);
         return { data: payload, error: null };
       }
@@ -183,6 +190,9 @@ export function AuthProvider({ children }) {
 
       if (payload?.accessToken && !error) {
         if (payload.user) {
+          if (payload.user.role !== 'USER') {
+            return { data: null, error: 'Your email is not authorized for this portal' };
+          }
           await setAuthSession(payload.user, payload.accessToken, payload.refreshToken);
         } else {
           await SecureStore.setItemAsync('access_token', payload.accessToken);

@@ -50,7 +50,8 @@ export default function ProfileScreen() {
         >
           {/* Profile Header Card */}
           <ProfileHeader
-            name={user?.fullname || "Medical Student"}
+            name={user?.full_name || user?.fullname || "Medical Student"}
+            username={user?.username}
             university={user?.university || "Medical Faculty"}
             level={user?.academicLevel?.toString() || "1"}
             avatarUrl={user?.profile_picture}
