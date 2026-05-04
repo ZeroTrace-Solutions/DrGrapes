@@ -20,6 +20,10 @@
       },
       "toastTitle": "{{label}} Coming Soon",
       "toastDesc": "We are currently perfecting this module for the next generation of healers."
+    },
+    "api": {
+      "success": "Operation successful",
+      "error": "Something went wrong"
     }
   },
   "intro": {

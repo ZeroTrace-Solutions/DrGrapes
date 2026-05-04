@@ -1,4 +1,5 @@
 import { createAuthApi } from './auth';
+import { createProfileApi } from './profile';
 
 /**
  * Shared API Service Factory
@@ -8,8 +9,6 @@ import { createAuthApi } from './auth';
 export const createSharedApi = (apiClient) => {
   return {
     auth: createAuthApi(apiClient),
-    // Add new modules here as the app grows
-    // profile: createProfileApi(apiClient),
-    // questions: createQuestionsApi(apiClient),
+    profile: createProfileApi(apiClient),
   };
 };

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import { useTranslation } from 'react-i18next';
 
 export const useApi = () => {
+  const { t } = useTranslation('landingPage');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,12 +29,12 @@ export const useApi = () => {
       });
       
       if (showSuccessToast) {
-        toast.success(successMessage || response.data.message || 'Operation successful');
+        toast.success(successMessage || response.data.message || t('common.api.success', { defaultValue: 'Operation successful' }));
       }
 
       return { data: response.data, error: null };
     } catch (err) {
-      const message = errorMessage || err.response?.data?.message || err.message || 'Something went wrong';
+      const message = errorMessage || err.response?.data?.message || err.message || t('common.api.error', { defaultValue: 'Something went wrong' });
       
       setError(message);
       

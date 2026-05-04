@@ -65,8 +65,4 @@ export const createAuthApi = (apiClient) => ({
     return await apiClient.get('/auth/universities');
   },
 
-  // 13. Get Faculties
-  getFaculties: async (universityId) => {
-    return await apiClient.get(`/auth/faculties`);
-  }
 });

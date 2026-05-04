@@ -1,93 +1,83 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Lock, Check, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
-import { useApi } from '@/hooks/useApi';
-import { useNavigate } from 'react-router-dom';
+import PasswordChecklist from './PasswordChecklist';
+import { validatePassword, validateConfirmPassword } from '@shared/utils/validation';
 
-const LoginForm = ({ onForgotClick }) => {
+const ResetForm = ({ email, code, onSuccess, onBack }) => {
   const { t, i18n } = useTranslation('loginPage');
-  const { login } = useAuth();
+  const { resetPassword } = useAuth();
   const [localLoading, setLocalLoading] = useState(false);
-  const navigate = useNavigate();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   
   const isRTL = i18n.language === 'ar';
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLocalLoading(true);
-    
-    const { data, error } = await login(email, password);
+    setError('');
 
-    if (data && !error) {
-      navigate('/router');
+    const passwordVal = validatePassword(password);
+    if (!passwordVal.isValid) {
+      setError(passwordVal.message);
+      return;
+    }
+
+    const confirmVal = validateConfirmPassword(password, confirmPassword);
+    if (!confirmVal.isValid) {
+      setError(confirmVal.message);
+      return;
+    }
+
+    setLocalLoading(true);
+    const { error: apiError } = await resetPassword(email, code, password);
+
+    if (!apiError) {
+      onSuccess();
+    } else {
+      setError(apiError);
     }
     setLocalLoading(false);
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
       dir={isRTL ? 'rtl' : 'ltr'}
       className="w-full max-w-md flex flex-col items-center space-y-12"
     >
-      {/* Header Section with bold typography */}
       <div className="text-center space-y-4">
         <motion.h1
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none"
+          className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none"
         >
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-container to-secondary">
-            {t('title')}
+            {t('resetTitle', { defaultValue: 'New Password' })}
           </span>
         </motion.h1>
         <motion.p
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
           className="text-on-surface-variant text-base md:text-lg opacity-60 font-medium max-w-[280px] mx-auto leading-relaxed"
         >
-          {t('subtitle')}
+          {t('resetSubtitle', { defaultValue: 'Create a secure password for your account' })}
         </motion.p>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full space-y-8">
         <div className="space-y-6">
-          {/* Email Input - Border Bottom Style */}
+          {/* Password Input */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="relative group"
-          >
-            <div className="absolute left-0 bottom-4 w-full h-px bg-white/10 group-focus-within:bg-primary/50 transition-all duration-500" />
-            <div className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 flex items-center gap-4`}>
-              <Mail className="w-5 h-5 text-on-surface-variant group-focus-within:text-primary transition-colors" />
-            </div>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t('placeholders.email')}
-              required
-              dir="ltr"
-              className={`w-full bg-transparent py-4 ${isRTL ? 'pr-12 text-right' : 'pl-12 text-left'} pr-4 outline-none text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
-            />
-          </motion.div>
-
-          {/* Password Input - Border Bottom Style */}
-          <motion.div
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
             className="relative group"
           >
             <div className="absolute left-0 bottom-4 w-full h-px bg-white/10 group-focus-within:bg-primary/50 transition-all duration-500" />
@@ -95,30 +85,57 @@ const LoginForm = ({ onForgotClick }) => {
               <Lock className="w-5 h-5 text-on-surface-variant group-focus-within:text-primary transition-colors" />
             </div>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={t('placeholders.password')}
+              placeholder={t('placeholders.newPassword', { defaultValue: 'New Password' })}
+              required
+              className={`w-full bg-transparent py-4 ${isRTL ? 'pr-12' : 'pl-12'} pr-12 outline-none text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors`}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </motion.div>
+          <PasswordChecklist password={password} />
+
+          {/* Confirm Password Input */}
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="relative group"
+          >
+            <div className="absolute left-0 bottom-4 w-full h-px bg-white/10 group-focus-within:bg-primary/50 transition-all duration-500" />
+            <div className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 flex items-center gap-4`}>
+              <Lock className="w-5 h-5 text-on-surface-variant group-focus-within:text-primary transition-colors" />
+            </div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder={t('placeholders.confirmPassword', { defaultValue: 'Confirm Password' })}
               required
               className={`w-full bg-transparent py-4 ${isRTL ? 'pr-12' : 'pl-12'} pr-4 outline-none text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
             />
           </motion.div>
         </div>
 
-        <div className={`flex items-center ${isRTL ? 'justify-start' : 'justify-end'}`}>
-          <button
-            type="button"
-            onClick={onForgotClick}
-            className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 hover:text-primary transition-colors"
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-red-400 text-xs font-bold uppercase tracking-widest text-center"
           >
-            {t('forgotPassword')}
-          </button>
-        </div>
+            {error}
+          </motion.p>
+        )}
 
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
         >
           <Button
             type="submit"
@@ -131,30 +148,15 @@ const LoginForm = ({ onForgotClick }) => {
               <Loader2 className="w-6 h-6 animate-spin" />
             ) : (
               <>
-                <span className="relative z-10">{t('loginButton')}</span>
-                <ArrowRight className={`w-6 h-6 relative z-10 transition-transform ${isRTL ? 'rotate-180 group-hover:-translate-x-2' : 'group-hover:translate-x-2'}`} />
+                <span className="relative z-10">{t('resetButton', { defaultValue: 'Update Password' })}</span>
+                <Check className="w-6 h-6 relative z-10" />
               </>
             )}
           </Button>
         </motion.div>
       </form>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="text-center text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/30"
-      >
-        {t('noAccount')}{' '}
-        <Button
-          variant="link"
-          className="text-primary hover:text-white transition-colors h-auto p-0 text-[10px] font-black uppercase tracking-[0.3em] ml-2"
-        >
-          {t('register')}
-        </Button>
-      </motion.div>
     </motion.div>
   );
 };
 
-export default LoginForm;
+export default ResetForm;

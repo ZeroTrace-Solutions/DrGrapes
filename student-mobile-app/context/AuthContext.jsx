@@ -50,13 +50,21 @@ export function AuthProvider({ children }) {
   async function loadStorageData() {
     try {
       const token = await SecureStore.getItemAsync('access_token');
-      const userDataSerialized = await SecureStore.getItemAsync('user_data');
 
-      if (token && userDataSerialized) {
-        setUser(JSON.parse(userDataSerialized));
+      if (token) {
+        // Fetch fresh user data on mount if token exists
+        const { data, error } = await sharedApi.profile.getMe();
+        const payload = data?.data || data;
+
+        if (payload && !error) {
+          setUser(payload);
+        } else {
+          await clearAuthSession();
+        }
       }
     } catch (e) {
       console.error("Error loading auth data", e);
+      await clearAuthSession();
     } finally {
       setIsLoading(false);
     }
@@ -65,14 +73,12 @@ export function AuthProvider({ children }) {
   const setAuthSession = async (userData, accessToken, refreshToken) => {
     await SecureStore.setItemAsync('access_token', accessToken);
     if (refreshToken) await SecureStore.setItemAsync('refresh_token', refreshToken);
-    await SecureStore.setItemAsync('user_data', JSON.stringify(userData));
     setUser(userData);
   };
 
   const clearAuthSession = async () => {
     await SecureStore.deleteItemAsync('access_token');
     await SecureStore.deleteItemAsync('refresh_token');
-    await SecureStore.deleteItemAsync('user_data');
     setUser(null);
   };
 

@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import { createSharedApi } from '@shared/api';
+import { createApiClientAdapter } from '@shared/api/BaseClient';
 import Constants from 'expo-constants';
 
 // For mobile, we use fetch or axios. Let's use a simple fetch-based client consistent with BaseClient if we want to avoid adding axios dependency, 
@@ -58,12 +59,7 @@ const apiClient = {
       return { data: null, error: friendlyError };
     }
   },
-
-  get: (url, options) => apiClient.request(url, 'GET', null, options),
-  post: (url, body, options) => apiClient.request(url, 'POST', body, options),
-  put: (url, body, options) => apiClient.request(url, 'PUT', body, options),
-  delete: (url, options) => apiClient.request(url, 'DELETE', null, options),
 };
 
-export const sharedApi = createSharedApi(apiClient);
+export const sharedApi = createSharedApi(createApiClientAdapter(apiClient.request));
 export default apiClient;

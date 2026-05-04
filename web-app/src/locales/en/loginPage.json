@@ -1,15 +1,38 @@
 {
   "seo": {
     "title": "Sign In | Dr. Grapes",
-    "description": "Login to your Dr. Grapes account to continue your medical journey."
+    "description": "Login to your Dr. Grapes account to continue your medical journey.",
+    "forgot": {
+      "title": "Reset Password | Dr. Grapes",
+      "description": "Request a password reset code."
+    },
+    "otp": {
+      "title": "Verify Code | Dr. Grapes",
+      "description": "Verify your email with the 6-digit code."
+    },
+    "reset": {
+      "title": "New Password | Dr. Grapes",
+      "description": "Set a new password for your account."
+    }
   },
   "backHome": "Back Home",
+  "back": "Back",
   "title": "Welcome Back",
   "subtitle": "Enter your credentials to access your account",
   "forgotPassword": "Forgot Password?",
   "loginButton": "Sign In",
   "noAccount": "Don't have an account?",
   "register": "Join the journey",
+  "forgotTitle": "Reset Password",
+  "forgotSubtitle": "Enter your email to receive a 6-digit reset code",
+  "sendCode": "Send Code",
+  "otpTitle": "Verify Email",
+  "otpSubtitle": "We sent a code to",
+  "resendIn": "Resend in",
+  "resendCode": "Resend Code",
+  "resetTitle": "New Password",
+  "resetSubtitle": "Create a secure password for your account",
+  "resetButton": "Update Password",
   "footer": {
     "terms": "Terms",
     "privacy": "Privacy",
@@ -17,6 +40,8 @@
   },
   "placeholders": {
     "email": "Email address",
-    "password": "Password"
+    "password": "Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password"
   }
 }

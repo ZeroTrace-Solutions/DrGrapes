@@ -53,8 +53,11 @@ function AppContent() {
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/router" element={<RoleRouter />} />
-          <Route path="/market" element={<div className="h-screen flex items-center justify-center bg-[#0c0f0f] text-foreground font-black text-4xl">MARKET PLACE</div>} />
-          
+
+          <Route element={<ProtectedRoute allowedRoles={['USER']} />}>
+            <Route path="/market" element={<div className="h-screen flex items-center justify-center bg-[#0c0f0f] text-foreground font-black text-4xl">MARKET PLACE</div>} />
+          </Route>
+
           {/* Admin & Supplier Dashboard Routes - Protected */}
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPPLIER_DELIVERY', 'SUPPLIER_NO_DELIVERY']} />}>
             <Route path="/dashboard" element={<AdminLayout />}>
