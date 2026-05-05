@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  Link as RouterLink,
   Bell,
   Search,
   BookOpen,
@@ -24,7 +25,16 @@ import {
   Trash2,
   Hospital,
   GraduationCap,
-  Microscope
+  Microscope,
+  LibraryBig,
+  View,
+  Package,
+  ListOrdered,
+  ShoppingCartIcon,
+  Percent,
+  DollarSign,
+  Logs,
+  ShoppingBag
 } from 'lucide-react';
 
 import {
@@ -67,6 +77,7 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const DATA = {
   user: {
@@ -76,58 +87,87 @@ const DATA = {
   },
   contexts: [
     {
-      name: 'General Hospital',
-      logo: Hospital,
-      plan: 'Clinical Rotation',
+      name: 'QB & E-shop',
+      logo: ShoppingBag,
     },
     {
-      name: 'Medical Faculty',
-      logo: GraduationCap,
-      plan: 'Academic',
-    },
-    {
-      name: 'Research Center',
-      logo: Microscope,
-      plan: 'Scientific',
-    },
+      name: 'Community',
+      logo: Users,
+    }
   ],
   navMain: [
     {
-      title: 'Learning',
+      title: 'System Overview',
+      url: '/dashboard/admin/overview',
+      icon: View,
+      isActive: true,
+      items: [],
+    },
+    {
+      title: 'Questions Bank',
       url: '#',
-      icon: SquareTerminal,
+      icon: LibraryBig,
       isActive: true,
       items: [
-        { title: 'Study Cards', url: '#' },
-        { title: 'Question Bank', url: '#' },
-        { title: 'Resources', url: '#' },
+        { title: 'Levels', url: '/dashboard/admin/questions/levels' },
+        { title: 'Modules', url: '/dashboard/admin/questions/modules' },
+        { title: 'Subjects', url: '/dashboard/admin/questions/subjects' },
+        { title: 'Exams', url: '/dashboard/admin/questions/exams' },
+        { title: 'Add questions', url: '/dashboard/admin/questions/add' },
       ],
     },
     {
-      title: 'Clinical',
+      title: 'Entities',
       url: '#',
-      icon: Stethoscope,
+      icon: Users,
       items: [
-        { title: 'Patient Logs', url: '#' },
-        { title: 'Case Studies', url: '#' },
-        { title: 'Procedures', url: '#' },
+        { title: 'Users', url: '/dashboard/admin/entities/users' },
+        { title: 'Admins', url: '/dashboard/admin/entities/admins' },
+        { title: 'Subadmins', url: '/dashboard/admin/entities/subadmins' },
+        { title: 'Suppliers (No Delivery)', url: '/dashboard/admin/entities/suppliers-no-delivery' },
+        { title: 'Suppliers (Delivery)', url: '/dashboard/admin/entities/suppliers-delivery' },
       ],
     },
     {
-      title: 'Analytics',
+      title: 'Products',
+      url: '/dashboard/admin/products',
+      icon: Package,
+      items: [],
+    },
+    {
+      title: 'Orders',
+      url: '/dashboard/admin/orders',
+      icon: ShoppingCartIcon,
+      items: [],
+    },
+    {
+      title: 'Sales',
+      url: '/dashboard/admin/sales',
+      icon: Percent,
+      items: [],
+    },
+    {
+      title: 'Finance',
       url: '#',
-      icon: Bot,
+      icon: DollarSign,
       items: [
-        { title: 'Performance', url: '#' },
-        { title: 'Progress', url: '#' },
-        { title: 'Streaks', url: '#' },
+        { title: 'Profit', url: '/dashboard/admin/finance/profit' },
+        { title: 'Salaries', url: '/dashboard/admin/finance/salaries' },
+        { title: 'Expenses', url: '/dashboard/admin/finance/expenses' },
       ],
     },
-  ],
-  recentCases: [
-    { name: 'Cardiology Case #1', url: '#', icon: Folder },
-    { name: 'Emergency Ward B', url: '#', icon: Folder },
-    { name: 'Surgical Prep', url: '#', icon: Folder },
+    {
+      title: 'Logs',
+      url: '#',
+      icon: Logs,
+      items: [
+        { title: 'All', url: '/dashboard/admin/logs/all-logs' },
+        { title: 'Entities', url: '/dashboard/admin/logs/entities-logs' },
+        { title: 'Questions Bank', url: '/dashboard/admin/logs/bank-logs' },
+        { title: 'Products', url: '/dashboard/admin/logs/products-logs' },
+        { title: 'Orders', url: '/dashboard/admin/logs/orders-logs' },
+      ],
+    },
   ],
 };
 
@@ -171,12 +211,12 @@ const AppSidebar = ({ hasActiveChats }) => {
               </DropdownMenuTrigger>
               {isAdmin && (
                 <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl border-outline-variant bg-surface-container-high"
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-sm border-outline-variant bg-surface-container-high"
                   align="start"
                   side={isMobile ? 'bottom' : 'right'}
                   sideOffset={4}
                 >
-                  <DropdownMenuLabel className="text-xs opacity-60">Medical Contexts</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs opacity-60">Portals</DropdownMenuLabel>
                   {DATA.contexts.map((context, index) => (
                     <DropdownMenuItem
                       key={context.name}
@@ -197,43 +237,60 @@ const AppSidebar = ({ hasActiveChats }) => {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="overflow-y-auto show-scrollbar" data-lenis-prevent>
         {/* Admin Specific Platform View */}
         {isAdmin && (
           <SidebarGroup>
             <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">Platform</SidebarGroupLabel>
             <SidebarMenu>
-              {DATA.navMain.map((item) => (
-                <Collapsible
-                  key={item.title}
-                  asChild
-                  defaultOpen={item.isActive}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
-                        {item.icon && <item.icon className="size-4" />}
-                        <span>{item.title}</span>
-                        <ChevronRight className="ml-auto transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90" />
+              {DATA.navMain.map((item) => {
+                const hasItems = item.items && item.items.length > 0;
+
+                if (!hasItems) {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild tooltip={item.title}>
+                        <Link to={item.url}>
+                          {item.icon && <item.icon className="size-4" />}
+                          <span>{item.title}</span>
+                        </Link>
                       </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild>
-                              <a href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </a>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
+                    </SidebarMenuItem>
+                  );
+                }
+
+                return (
+                  <Collapsible
+                    key={item.title}
+                    asChild
+                    defaultOpen={item.isActive}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip={item.title}>
+                          {item.icon && <item.icon className="size-4" />}
+                          <span>{item.title}</span>
+                          <ChevronRight className="ml-auto transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {item.items?.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild>
+                                <Link to={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroup>
         )}
@@ -273,7 +330,7 @@ const AppSidebar = ({ hasActiveChats }) => {
             <SidebarMenuItem>
               <SidebarMenuButton tooltip="Messages">
                 <MessageSquare className="size-4" />
-                <span>Messages</span>
+                <span>Chats</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
