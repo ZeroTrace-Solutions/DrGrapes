@@ -241,10 +241,10 @@ export function AuthProvider({ children }) {
   };
 
   // 9. Change Password (Initiate)
-  const changePassword = async (email) => {
+  const changePassword = async (oldPassword, newPassword) => {
     setIsLoading(true);
     try {
-      return await sharedApi.auth.changePassword(email);
+      return await sharedApi.auth.changePassword(oldPassword, newPassword);
     } finally {
       setIsLoading(false);
     }

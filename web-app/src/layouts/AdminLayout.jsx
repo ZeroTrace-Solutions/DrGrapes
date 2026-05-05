@@ -13,14 +13,14 @@ const AdminLayout = () => {
   ]);
 
   return (
-    <div className="flex h-svh w-full bg-[#0c0f0f] overflow-hidden selection:bg-primary/30">
+    <div className="flex h-svh w-full overflow-hidden">
       {/* 1. Chat Sidebar (Far Left Dock) */}
       <ChatSidebar chats={activeChats} />
 
       {/* 2. Main Admin Sidebar System */}
       <SidebarProvider className="h-full">
         <AppSidebar hasActiveChats={activeChats.length > 0} />
-        
+
         {/* 3. Main Content Area - Inset design with unified surface */}
         <SidebarInset className="flex flex-col bg-transparent relative h-full min-h-0">
           <AdminHeader />
@@ -29,10 +29,6 @@ const AdminLayout = () => {
               <Outlet context={{ activeChats, setActiveChats }} />
             </div>
           </div>
-          
-          {/* Subtle Ambient Glows for the Dashboard */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none -z-10" />
         </SidebarInset>
       </SidebarProvider>
     </div>

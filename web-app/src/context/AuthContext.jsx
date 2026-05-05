@@ -102,6 +102,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 6. Resend OTP
+  /*
+  * @param {string} email - The email address of the user.
+  * @param {string} purpose - The purpose of the OTP, one of {SIGNUP, FORGET_PASSWORD, CHANGE_PASSWORD}.
+  * @returns {Promise} - The response from the API.
+  */
   const resendOtp = async (email, purpose) => {
     return await sharedApi.auth.resendOtp(email, purpose);
   };
@@ -117,8 +122,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 9. Change Password (Initiate)
-  const changePassword = async (email) => {
-    return await sharedApi.auth.changePassword(email);
+  const changePassword = async (oldPassword, newPassword) => {
+    return await sharedApi.auth.changePassword(oldPassword, newPassword);
   };
 
   // 10. LogOut
@@ -145,7 +150,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     role: user?.role || null,
-    loading: authLoading || mutationLoading,
+    loading: authLoading,
+    isMutating: mutationLoading,
     login,
     logout,
     signUp,

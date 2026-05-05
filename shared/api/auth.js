@@ -45,8 +45,8 @@ export const createAuthApi = (apiClient) => ({
   },
 
   // 9. Change Password (Initiate)
-  changePassword: async (email) => {
-    return await apiClient.post('/auth/change-password', { email });
+  changePassword: async (oldPassword, newPassword) => {
+    return await apiClient.post('/auth/change-password', { oldPassword, newPassword });
   },
 
   // 10. LogOut

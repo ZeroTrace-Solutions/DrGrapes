@@ -28,7 +28,9 @@ import SalesPage from './pages/admin/SalesPage'
 import ProfitPage from './pages/admin/finance/ProfitPage'
 import SalariesPage from './pages/admin/finance/SalariesPage'
 import ExpensesPage from './pages/admin/finance/ExpensesPage'
+import SettingsPage from './pages/admin/SettingsPage'
 import { Outlet } from 'react-router-dom'
+import { ThemeProvider } from './context/ThemeContext'
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -77,7 +79,7 @@ function AppContent() {
           </Route>
 
           {/* Admin & Supplier Dashboard Routes - Protected */}
-          <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'SUPPLIER_DELIVERY', 'SUPPLIER_NO_DELIVERY']} />}>
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
             <Route path="/dashboard" element={<AdminLayout />}>
               <Route path="admin">
                 <Route index element={<DashboardOverview />} />
@@ -107,10 +109,18 @@ function AppContent() {
                 <Route path="finance/profit" element={<ProfitPage />} />
                 <Route path="finance/salaries" element={<SalariesPage />} />
                 <Route path="finance/expenses" element={<ExpensesPage />} />
+
+                {/* Settings */}
+                <Route path="settings" element={<SettingsPage />} />
               </Route>
 
-              <Route path="supplier/d" element={<DashboardOverview />} />
-              <Route path="supplier/nd" element={<DashboardOverview />} />
+              <Route element={<ProtectedRoute allowedRoles={['SUPPLIER_DELIVERY']} />}>
+                <Route path="supplier-d" element={<DashboardOverview />} />
+              </Route>
+
+              <Route element={<ProtectedRoute allowedRoles={['SUPPLIER_NO_DELIVERY']} />}>
+                <Route path="supplier-nd" element={<DashboardOverview />} />
+              </Route>
             </Route>
           </Route>
         </Routes>
@@ -123,11 +133,13 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <ScrollToTop />
-        <SmoothScroll>
-          <AppContent />
-        </SmoothScroll>
-        <Toaster position="top-center" expand={false} richColors />
+        <ThemeProvider>
+          <ScrollToTop />
+          <SmoothScroll>
+            <AppContent />
+          </SmoothScroll>
+          <Toaster position="top-center" expand={false} richColors />
+        </ThemeProvider>
       </AuthProvider>
     </Router>
   )

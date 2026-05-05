@@ -34,7 +34,8 @@ import {
   Percent,
   DollarSign,
   Logs,
-  ShoppingBag
+  ShoppingBag,
+  User
 } from 'lucide-react';
 
 import {
@@ -77,14 +78,9 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const DATA = {
-  user: {
-    name: 'Dr. Grapes',
-    email: 'admin@drgrapes.med',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin',
-  },
   contexts: [
     {
       name: 'QB & E-shop',
@@ -173,6 +169,8 @@ const DATA = {
 
 const AppSidebar = ({ hasActiveChats }) => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [activeContext, setActiveContext] = React.useState(DATA.contexts[0]);
 
@@ -182,7 +180,7 @@ const AppSidebar = ({ hasActiveChats }) => {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-outline-variant/30 bg-surface-container/80 backdrop-blur-xl"
+      className="border-r border-outline-variant/30 bg-transparent backdrop-blur-xl"
       animate={{ marginLeft: hasActiveChats ? '80px' : '0' }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
@@ -245,11 +243,17 @@ const AppSidebar = ({ hasActiveChats }) => {
             <SidebarMenu>
               {DATA.navMain.map((item) => {
                 const hasItems = item.items && item.items.length > 0;
+                const isParentActive = hasItems && item.items.some(sub => location.pathname === sub.url);
+                const isActive = !hasItems && location.pathname === item.url;
 
                 if (!hasItems) {
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild tooltip={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip={item.title}
+                        isActive={isActive}
+                      >
                         <Link to={item.url}>
                           {item.icon && <item.icon className="size-4" />}
                           <span>{item.title}</span>
@@ -263,12 +267,15 @@ const AppSidebar = ({ hasActiveChats }) => {
                   <Collapsible
                     key={item.title}
                     asChild
-                    defaultOpen={item.isActive}
+                    defaultOpen={item.isActive || isParentActive}
                     className="group/collapsible"
                   >
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={item.title}>
+                        <SidebarMenuButton
+                          tooltip={item.title}
+                          isActive={isParentActive}
+                        >
                           {item.icon && <item.icon className="size-4" />}
                           <span>{item.title}</span>
                           <ChevronRight className="ml-auto transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90" />
@@ -276,15 +283,21 @@ const AppSidebar = ({ hasActiveChats }) => {
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <SidebarMenuSub>
-                          {item.items?.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton asChild>
-                                <Link to={subItem.url}>
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
+                          {item.items?.map((subItem) => {
+                            const isSubActive = location.pathname === subItem.url;
+                            return (
+                              <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={isSubActive}
+                                >
+                                  <Link to={subItem.url}>
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>
@@ -301,9 +314,15 @@ const AppSidebar = ({ hasActiveChats }) => {
             <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">Supply Chain</SidebarGroupLabel>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Dashboard">
-                  <LayoutDashboard className="size-4" />
-                  <span>Inventory Overview</span>
+                <SidebarMenuButton
+                  tooltip="Dashboard"
+                  asChild
+                  isActive={location.pathname === (user?.role === 'SUPPLIER_DELIVERY' ? '/dashboard/supplier/d' : '/dashboard/supplier/nd')}
+                >
+                  <Link to={user?.role === 'SUPPLIER_DELIVERY' ? '/dashboard/supplier/d' : '/dashboard/supplier/nd'}>
+                    <LayoutDashboard className="size-4" />
+                    <span>Inventory Overview</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -347,9 +366,9 @@ const AppSidebar = ({ hasActiveChats }) => {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg border border-outline-variant">
-                    <AvatarImage src={user?.profile_picture || DATA.user.avatar} alt={user?.fullname} />
+                    <AvatarImage src={user?.profile_picture} alt={user?.fullname} />
                     <AvatarFallback className="rounded-lg bg-surface-variant">
-                      {user?.fullname?.charAt(0) || 'U'}
+                      <User className="size-4" />
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
@@ -360,7 +379,7 @@ const AppSidebar = ({ hasActiveChats }) => {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl border-outline-variant bg-surface-container-high"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-sm border-outline-variant bg-surface-container-high"
                 side={isMobile ? 'bottom' : 'right'}
                 align="end"
                 sideOffset={4}
@@ -368,9 +387,9 @@ const AppSidebar = ({ hasActiveChats }) => {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={user?.profile_picture || DATA.user.avatar} alt={user?.fullname} />
+                      <AvatarImage src={user?.profile_picture} alt={user?.fullname} />
                       <AvatarFallback className="rounded-lg bg-surface-variant">
-                        {user?.fullname?.charAt(0) || 'U'}
+                        <User className="size-4" />
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
@@ -381,11 +400,11 @@ const AppSidebar = ({ hasActiveChats }) => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-outline-variant" />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); navigate("/dashboard/admin/profile"); }} className="cursor-pointer">
                     <BadgeCheck className="size-4 mr-2" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); navigate("/dashboard/admin/settings"); }} className="cursor-pointer">
                     <Settings2 className="size-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
