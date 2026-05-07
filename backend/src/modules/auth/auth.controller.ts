@@ -5,9 +5,13 @@ import {
   HttpCode,
   Param,
   Post,
+  Req,
   Request,
+  Res,
   UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { Request as ExpressRequest, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { LoginResponseDTO } from './dto/login.dto';
@@ -19,10 +23,20 @@ import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { RefreshDto } from './dto/refresh.dto';
 
 export type AuthenticatedRequest = {
   user: UserResponseDto;
+};
+
+type RequestWithCookies = ExpressRequest & {
+  cookies: Record<string, string | undefined>;
+};
+
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
 @Controller('auth')
@@ -32,14 +46,15 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
-  async login(@Request() req: AuthenticatedRequest) {
+  async login(
+    @Request() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const tokens = await this.authService.generateTokens(req.user);
 
-    return new LoginResponseDTO(
-      req.user,
-      tokens.accessToken,
-      tokens.refreshToken,
-    );
+    res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
+
+    return new LoginResponseDTO(req.user, tokens.accessToken);
   }
 
   @Post('signup')
@@ -48,10 +63,16 @@ export class AuthController {
   }
 
   @Post('verify-email')
-  async verifyEmail(@Body() verifyDto: VerifySignupDto) {
+  async verifyEmail(
+    @Body() verifyDto: VerifySignupDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { user, accessToken, refreshToken } =
       await this.authService.verifyEmail(verifyDto);
-    return new LoginResponseDTO(user, accessToken, refreshToken);
+
+    res.cookie('refresh_token', refreshToken, refreshCookieOptions);
+
+    return new LoginResponseDTO(user, accessToken);
   }
 
   @Get('check-username/:username')
@@ -101,28 +122,48 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Request() req: AuthenticatedRequest) {
+  async logout(
+    @Request() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    res.clearCookie('refresh_token', refreshCookieOptions);
     return await this.authService.logout(req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout-all')
-  async logoutAll(@Request() req: AuthenticatedRequest) {
+  async logoutAll(
+    @Request() req: AuthenticatedRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    res.clearCookie('refresh_token', refreshCookieOptions);
     return await this.authService.logoutAll(req.user.id);
   }
 
   @Post('refresh')
-  async refresh(@Body() dto: RefreshDto) {
-    const { user, tokens } = await this.authService.refreshTokens(
-      dto.refreshToken,
-    );
+  async refresh(
+    @Req() req: RequestWithCookies,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const rawCookies: unknown = req.cookies;
+    const refreshToken =
+      rawCookies &&
+      typeof rawCookies === 'object' &&
+      'refresh_token' in rawCookies &&
+      typeof (rawCookies as { refresh_token?: unknown }).refresh_token ===
+        'string'
+        ? (rawCookies as { refresh_token: string }).refresh_token
+        : null;
 
-    // Return the exact same standardized DTO as your login endpoint
-    return new LoginResponseDTO(
-      new UserResponseDto(user),
-      tokens.accessToken,
-      tokens.refreshToken,
-    );
+    if (!refreshToken) {
+      throw new UnauthorizedException('Missing refresh token cookie');
+    }
+
+    const { user, tokens } = await this.authService.refreshTokens(refreshToken);
+
+    res.cookie('refresh_token', tokens.refreshToken, refreshCookieOptions);
+
+    return new LoginResponseDTO(new UserResponseDto(user), tokens.accessToken);
   }
 
   @Get('universities')

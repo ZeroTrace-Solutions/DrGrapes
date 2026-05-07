@@ -12,15 +12,15 @@ export class LoginDTO {
 export class LoginResponseDTO {
   user: UserResponseDto;
   accessToken: string;
-  refreshToken: string;
+  // refreshToken: string;
 
   constructor(
     user: UserResponseDto,
     accessToken: string,
-    refreshToken: string,
+    // refreshToken: string,
   ) {
     this.user = user;
     this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
+    // this.refreshToken = refreshToken;
   }
 }
