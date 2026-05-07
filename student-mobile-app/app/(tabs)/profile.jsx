@@ -83,7 +83,12 @@ export default function ProfileScreen() {
           {/* Account Section */}
           <SectionTitle title="Account" />
           <View style={{ gap: 12, marginBottom: 32 }}>
-            <ProfileRow icon="lock-closed-outline" label="Change Password" color="#2563eb" />
+            <ProfileRow 
+              icon="lock-closed-outline" 
+              label="Change Password" 
+              color="#2563eb" 
+              onPress={() => router.push('/change-password')} 
+            />
             <ProfileRow icon="desktop-outline" label="Devices" color="#2563eb" />
             <ProfileRow icon="log-out-outline" label="Logout" color="#ef4444" isLast onPress={logout} />
           </View>
