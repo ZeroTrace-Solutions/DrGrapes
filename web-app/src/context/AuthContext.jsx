@@ -1,7 +1,9 @@
 import api from '@/lib/api';
 import { useApi } from '@/hooks/useApi';
-import { createAuthApi } from '@shared/api/auth';
+import { createSharedApi } from '@shared/api';
+import { createApiClientAdapter } from '@shared/api/BaseClient';
 import { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
@@ -9,27 +11,33 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const { apiMutate, loading: mutationLoading } = useApi();
+  const navigate = useNavigate();
 
-  // Initialize shared auth API with the mutation helper to keep toasts/loading
-  const authApi = createAuthApi({
-    get: (url, options) => apiMutate(url, 'GET', null, options),
-    post: (url, body, options) => apiMutate(url, 'POST', body, options),
-    put: (url, body, options) => apiMutate(url, 'PUT', body, options),
-    delete: (url, options) => apiMutate(url, 'DELETE', null, options),
-  });
+  // Initialize shared API modules using the shared adapter
+  const sharedApi = createSharedApi(createApiClientAdapter(apiMutate));
+  const silentApi = createSharedApi(createApiClientAdapter(apiMutate, { showSuccessToast: false }));
 
   // Check if user is logged in on mount
   useEffect(() => {
-    const hydrateAuth = () => {
+    const hydrateAuth = async () => {
       const accessToken = localStorage.getItem('access_token');
-      const savedUser = localStorage.getItem('user_data');
 
-      if (accessToken && savedUser) {
+      if (accessToken) {
         try {
-          setUser(JSON.parse(savedUser));
+          const { data, error } = await silentApi.profile.getMe();
+          const payload = data?.data || data;
+
+          if (payload && !error) {
+            setUser(payload);
+            navigate('/router');
+          } else {
+            clearAuthSession();
+            navigate('/login');
+          }
         } catch (e) {
-          console.error('Failed to parse user data', e);
+          console.error('Failed to hydrate auth', e);
           clearAuthSession();
+          navigate('/login');
         }
       }
       setAuthLoading(false);
@@ -41,35 +49,33 @@ export const AuthProvider = ({ children }) => {
   const setAuthSession = (userData, accessToken, refreshToken) => {
     localStorage.setItem('access_token', accessToken);
     if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
-    localStorage.setItem('user_data', JSON.stringify(userData));
     setUser(userData);
   };
 
   const clearAuthSession = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_data');
     setUser(null);
   };
 
   // 1. Suggest Usernames
   const suggestUsernames = async (fullName, email) => {
-    return await authApi.suggestUsernames(fullName, email);
+    return await sharedApi.auth.suggestUsernames(fullName, email);
   };
 
   // 2. Check Username Availability
   const checkUsername = async (username) => {
-    return await authApi.checkUsername(username);
+    return await sharedApi.auth.checkUsername(username);
   };
 
   // 3. SignUp
   const signUp = async (userData) => {
-    return await authApi.signUp(userData);
+    return await sharedApi.auth.signUp(userData);
   };
 
   // 4. LogIn
   const login = async (email, password) => {
-    const { data, error } = await authApi.login(email, password);
+    const { data, error } = await sharedApi.auth.login(email, password);
     const payload = data?.data || data;
 
     if (payload?.accessToken && !error) {
@@ -81,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
   // 5. Verify OTP
   const verifyEmail = async (email, code) => {
-    const { data, error } = await authApi.verifyEmail(email, code);
+    const { data, error } = await sharedApi.auth.verifyEmail(email, code);
     const payload = data?.data || data;
 
     if (payload?.accessToken && !error) {
@@ -96,28 +102,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 6. Resend OTP
+  /*
+  * @param {string} email - The email address of the user.
+  * @param {string} purpose - The purpose of the OTP, one of {SIGNUP, FORGET_PASSWORD, CHANGE_PASSWORD}.
+  * @returns {Promise} - The response from the API.
+  */
   const resendOtp = async (email, purpose) => {
-    return await authApi.resendOtp(email, purpose);
+    return await sharedApi.auth.resendOtp(email, purpose);
   };
 
   // 7. Forget Password
   const forgetPassword = async (email) => {
-    return await authApi.forgetPassword(email);
+    return await sharedApi.auth.forgetPassword(email);
   };
 
   // 8. Reset Password
   const resetPassword = async (email, code, newPassword) => {
-    return await authApi.resetPassword(email, code, newPassword);
+    return await sharedApi.auth.resetPassword(email, code, newPassword);
   };
 
   // 9. Change Password (Initiate)
-  const changePassword = async (email) => {
-    return await authApi.changePassword(email);
+  const changePassword = async (oldPassword, newPassword) => {
+    return await sharedApi.auth.changePassword(oldPassword, newPassword);
   };
 
   // 10. LogOut
   const logout = async (allDevices = false) => {
-    await authApi.logout(allDevices, { showSuccessToast: false });
+    await silentApi.auth.logout(allDevices);
     clearAuthSession();
   };
 
@@ -126,7 +137,7 @@ export const AuthProvider = ({ children }) => {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken) return { error: 'No refresh token' };
 
-    const { data, error } = await authApi.refreshAccessToken(refreshToken);
+    const { data, error } = await sharedApi.auth.refreshAccessToken(refreshToken);
     const payload = data?.data || data;
 
     if (payload?.accessToken && !error) {
@@ -139,7 +150,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     role: user?.role || null,
-    loading: authLoading || mutationLoading,
+    loading: authLoading,
+    isMutating: mutationLoading,
     login,
     logout,
     signUp,

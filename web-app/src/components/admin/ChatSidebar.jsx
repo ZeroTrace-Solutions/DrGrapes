@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
 } from '@/components/animate-ui/components/animate/tooltip';
 
 const ChatSidebar = ({ chats = [] }) => {
@@ -19,8 +19,8 @@ const ChatSidebar = ({ chats = [] }) => {
           className="flex-shrink-0 h-full flex flex-col items-center py-6 gap-6 z-20 relative"
         >
           {/* Floating Dock Background */}
-          <div className="absolute inset-y-4 left-2 right-2 bg-surface-container/40 backdrop-blur-2xl border border-outline-variant/30 rounded-[2rem] -z-10 shadow-2xl" />
-          
+          <div className="absolute inset-y-4 left-2 right-2 backdrop-blur-2xl border border-outline-variant/30 rounded-[2rem] -z-10 shadow-2xl" />
+
           <div className="flex flex-col gap-4">
             {chats.map((chat) => (
               <TooltipProvider key={chat.id}>
@@ -31,9 +31,9 @@ const ChatSidebar = ({ chats = [] }) => {
                       whileTap={{ scale: 0.9 }}
                       className="w-12 h-12 rounded-xl overflow-hidden border-2 border-primary/20 hover:border-primary cursor-pointer transition-all shadow-xl bg-surface-bright"
                     >
-                      <img 
-                        src={chat.avatar} 
-                        alt={chat.name} 
+                      <img
+                        src={chat.avatar}
+                        alt={chat.name}
                         className="w-full h-full object-cover"
                       />
                     </motion.div>

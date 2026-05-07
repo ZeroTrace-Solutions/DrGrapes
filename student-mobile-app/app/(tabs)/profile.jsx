@@ -7,6 +7,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTabBarVisibility } from './_layout';
+import { useAuth } from '@/context/AuthContext';
+
 
 // Components
 import ActivityCard from '../../components/profile/ActivityCard';
@@ -15,6 +17,7 @@ import ProfileRow from '../../components/profile/ProfileRow';
 import SectionTitle from '../../components/profile/SectionTitle';
 
 export default function ProfileScreen() {
+  const { user, logout } = useAuth();
   const router = useRouter();
   const { show, hide } = useTabBarVisibility();
   const lastScrollY = useRef(0);
@@ -47,10 +50,11 @@ export default function ProfileScreen() {
         >
           {/* Profile Header Card */}
           <ProfileHeader
-            name="Dr. Jimmy"
-            university="Stanford University"
-            level="42"
-            avatarUrl="https://i.pravatar.cc/150?u=jimmy"
+            name={user?.full_name || user?.fullname || "Medical Student"}
+            username={user?.username}
+            university={user?.university || "Medical Faculty"}
+            level={user?.academicLevel?.toString() || "1"}
+            avatarUrl={user?.profile_picture}
           />
 
           {/* Activity Section */}
@@ -81,7 +85,7 @@ export default function ProfileScreen() {
           <View style={{ gap: 12, marginBottom: 32 }}>
             <ProfileRow icon="lock-closed-outline" label="Change Password" color="#2563eb" />
             <ProfileRow icon="desktop-outline" label="Devices" color="#2563eb" />
-            <ProfileRow icon="log-out-outline" label="Logout" color="#ef4444" isLast />
+            <ProfileRow icon="log-out-outline" label="Logout" color="#ef4444" isLast onPress={logout} />
           </View>
 
           {/* Information Section */}

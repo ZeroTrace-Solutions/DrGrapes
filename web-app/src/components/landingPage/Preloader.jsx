@@ -46,6 +46,7 @@ const Preloader = () => {
         }}
         initial="hidden"
         animate="visible"
+        dir="ltr"
         className="flex overflow-hidden py-4 bg-gradient-to-r from-primary via-primary-container to-secondary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-x drop-shadow-[0_0_25px_rgba(255,175,210,0.4)]"
       >
         {"Dr. Grapes".split("").map((char, index) => (

@@ -1,21 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import LoginForm from '@/components/loginPage/LoginForm';
+import ForgotForm from '@/components/loginPage/ForgotForm';
+import OtpForm from '@/components/loginPage/OtpForm';
+import ResetForm from '@/components/loginPage/ResetForm';
 import logo from '@/assets/dr-grapes-logo.png';
 import SEO from '@/components/SEO';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const { t, i18n } = useTranslation('loginPage');
+  const navigate = useNavigate();
   const isRTL = i18n.language === 'ar';
+  
+  // View states: 'login', 'forgot', 'otp', 'reset'
+  const [view, setView] = useState('login');
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+
+  const renderView = () => {
+    switch (view) {
+      case 'forgot':
+        return (
+          <ForgotForm 
+            onBack={() => setView('login')} 
+            onSuccess={(email) => {
+              setEmail(email);
+              setView('otp');
+            }}
+          />
+        );
+      case 'otp':
+        return (
+          <OtpForm 
+            email={email}
+            onBack={() => setView('forgot')}
+            onSuccess={(code) => {
+              setOtp(code);
+              setView('reset');
+            }}
+          />
+        );
+      case 'reset':
+        return (
+          <ResetForm 
+            email={email}
+            code={otp}
+            onBack={() => setView('otp')}
+            onSuccess={() => setView('login')}
+          />
+        );
+      default:
+        return <LoginForm onForgotClick={() => setView('forgot')} />;
+    }
+  };
 
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'} className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 overflow-hidden">
       <SEO 
-        title={t('seo.title')}
-        description={t('seo.description')}
+        title={t(`seo.${view}.title`, { defaultValue: t('seo.title') })}
+        description={t(`seo.${view}.description`, { defaultValue: t('seo.description') })}
       />
 
       {/* Atmospheric Background - Matching Landing Page */}
@@ -39,14 +85,21 @@ const LoginPage = () => {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/p6.png')] opacity-[0.03] mix-blend-overlay" />
       </div>
 
-      {/* Back to Home Button */}
-      <Link 
-        to="/" 
+      {/* Back Button */}
+      <button 
+        onClick={() => {
+          if (view === 'login') {
+            navigate('/');
+          } else {
+            const backMap = { 'forgot': 'login', 'otp': 'forgot', 'reset': 'otp' };
+            setView(backMap[view]);
+          }
+        }}
         className={`absolute top-8 ${isRTL ? 'right-8' : 'left-8'} z-50 flex items-center gap-2 text-on-surface-variant/60 hover:text-primary transition-colors font-black uppercase tracking-widest text-xs group`}
       >
         <ArrowLeft className={`w-4 h-4 transition-transform ${isRTL ? 'rotate-180 group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
-        {t('backHome')}
-      </Link>
+        {view === 'login' ? t('backHome') : t('back')}
+      </button>
 
       <div className="relative z-10 w-full max-w-md flex flex-col items-center space-y-8">
         {/* Logo */}
@@ -58,8 +111,8 @@ const LoginPage = () => {
           <img src={logo} alt="Dr. Grapes" className="w-full h-full object-contain" />
         </motion.div>
 
-        {/* Login Form */}
-        <LoginForm />
+        {/* Dynamic Content */}
+        {renderView()}
 
         {/* Footer Links */}
         <div className="flex gap-6 text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40">

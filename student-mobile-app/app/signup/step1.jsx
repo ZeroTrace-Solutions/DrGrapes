@@ -1,14 +1,17 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { KeyboardAvoidingView, Linking, Platform, ScrollView, Text, View } from 'react-native';
-import Animated, { SlideInRight, SlideOutLeft } from 'react-native-reanimated';
+import Animated, { SlideInRight, SlideOutLeft, FadeInUp, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
+import { validateEmail } from '@shared/utils/validation';
 
 // Components
 import SignupAction from '@/components/signup/SignupAction';
 import SignupHeader from '@/components/signup/SignupHeader';
 import SignupInput from '@/components/signup/SignupInput';
 import SignupSocialButton from '@/components/signup/SignupSocialButton';
+import SignupError from '@/components/signup/SignupError';
 import { useAuth } from '@/context/AuthContext';
 import { useState } from 'react';
 
@@ -17,16 +20,25 @@ const PRIVACY_URL = "https://dr-grapes.ztsolutions.tech/privacy";
 
 export default function SignupStep1() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const { updateSignupData, resetSignupData } = useAuth();
+  const { updateSignupData, resetSignupData, signupData } = useAuth();
+  const [email, setEmail] = useState(signupData.email || '');
   const { method } = useLocalSearchParams();
   const isGoogle = method === 'google';
+  const [error, setError] = useState(null);
 
   const openLink = (url) => {
     Linking.openURL(url).catch((err) => console.error("Couldn't load page", err));
   };
 
   const handleContinue = () => {
+    setError(null);
+    const emailValidation = validateEmail(email);
+    
+    if (!emailValidation.isValid) {
+      setError(emailValidation.message);
+      return;
+    }
+
     updateSignupData({ email, method: 'email' });
     router.push('/signup/step2');
   };
@@ -83,9 +95,13 @@ export default function SignupStep1() {
                 onChangeText={setEmail}
               />
 
+              {/* Error Message */}
+              <SignupError message={error} />
+
               {/* Primary Action */}
               <SignupAction
                 onPress={handleContinue}
+                isLoading={false}
                 footerText={
                   <Text>
                     By continuing, you agree to our{" "}

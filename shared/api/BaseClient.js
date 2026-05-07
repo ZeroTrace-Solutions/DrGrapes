@@ -58,3 +58,15 @@ export class BaseClient {
     return this.request(url, { ...options, method: 'DELETE' });
   }
 }
+
+/**
+ * Adapter to convert a generic request handler into the structure expected by shared API modules.
+ * @param {Function} requestHandler - A function that handles (url, method, body, options)
+ * @param {Object} defaultOptions - Default options to merge into every request
+ */
+export const createApiClientAdapter = (requestHandler, defaultOptions = {}) => ({
+  get: (url, options) => requestHandler(url, 'GET', null, { ...defaultOptions, ...options }),
+  post: (url, body, options) => requestHandler(url, 'POST', body, { ...defaultOptions, ...options }),
+  put: (url, body, options) => requestHandler(url, 'PUT', body, { ...defaultOptions, ...options }),
+  delete: (url, options) => requestHandler(url, 'DELETE', null, { ...defaultOptions, ...options }),
+});

@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { useApi } from '@/hooks/useApi';
 import { useNavigate } from 'react-router-dom';
 
-const LoginForm = () => {
+const LoginForm = ({ onForgotClick }) => {
   const { t, i18n } = useTranslation('loginPage');
   const { login } = useAuth();
   const [localLoading, setLocalLoading] = useState(false);
   const navigate = useNavigate();
-  
+
   const isRTL = i18n.language === 'ar';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalLoading(true);
-    
+
     const { data, error } = await login(email, password);
 
     if (data && !error) {
@@ -69,16 +71,17 @@ const LoginForm = () => {
             className="relative group"
           >
             <div className="absolute left-0 bottom-4 w-full h-px bg-white/10 group-focus-within:bg-primary/50 transition-all duration-500" />
-            <div className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 flex items-center gap-4`}>
+            <div className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 flex items-center gap-4 z-10`}>
               <Mail className="w-5 h-5 text-on-surface-variant group-focus-within:text-primary transition-colors" />
             </div>
-            <input
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('placeholders.email')}
               required
-              className={`w-full bg-transparent py-4 ${isRTL ? 'pr-12' : 'pl-12'} pr-4 outline-none text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
+              dir="ltr"
+              className={`w-full bg-transparent border-none rounded-none py-8 h-auto ${isRTL ? 'pr-12 text-right' : 'pl-12 text-left'} pr-4 shadow-none focus-visible:ring-0 text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
             />
           </motion.div>
 
@@ -90,27 +93,38 @@ const LoginForm = () => {
             className="relative group"
           >
             <div className="absolute left-0 bottom-4 w-full h-px bg-white/10 group-focus-within:bg-primary/50 transition-all duration-500" />
-            <div className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 flex items-center gap-4`}>
+            <div className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 flex items-center gap-4 z-10`}>
               <Lock className="w-5 h-5 text-on-surface-variant group-focus-within:text-primary transition-colors" />
             </div>
-            <input
-              type="password"
+            <Input
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t('placeholders.password')}
               required
-              className={`w-full bg-transparent py-4 ${isRTL ? 'pr-12' : 'pl-12'} pr-4 outline-none text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
+              className={`w-full bg-transparent border-none rounded-none py-8 h-auto ${isRTL ? 'pr-12' : 'pl-12'} pr-12 shadow-none focus-visible:ring-0 text-xl font-bold tracking-tight text-on-surface placeholder:text-on-surface-variant/20 placeholder:font-medium`}
             />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowPassword(!showPassword)}
+              className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 h-10 w-10 text-on-surface-variant/40 hover:text-primary hover:bg-transparent transition-all z-10`}
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </Button>
           </motion.div>
         </div>
 
         <div className={`flex items-center ${isRTL ? 'justify-start' : 'justify-end'}`}>
-          <button
+          <Button
             type="button"
-            className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 hover:text-primary transition-colors"
+            variant="link"
+            onClick={onForgotClick}
+            className="h-auto p-0 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 hover:text-primary transition-colors decoration-transparent hover:decoration-primary"
           >
             {t('forgotPassword')}
-          </button>
+          </Button>
         </div>
 
         <motion.div

@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { View, TextInput, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function SignupUsernameInput({ value, onChangeText, isAvailable = true }) {
+export default function SignupUsernameInput({ value, onChangeText, isAvailable = true, isLoading = false, error = false }) {
   const [isFocused, setIsFocused] = useState(false);
+  const showError = error || (!isAvailable && value.length >= 3 && !isLoading);
 
   return (
     <View className="w-full gap-sm">
       <Text className="font-bold text-xs text-on-surface-variant ml-4 uppercase tracking-widest">
-        Unique Username
+        Username
       </Text>
       <View className="relative">
         <View className="absolute left-5 top-0 bottom-0 justify-center z-10">
@@ -17,7 +18,7 @@ export default function SignupUsernameInput({ value, onChangeText, isAvailable =
         <TextInput
           style={{
             backgroundColor: '#282a2b',
-            borderColor: isFocused ? '#405DE6' : 'transparent',
+            borderColor: showError ? '#ffb4ab' : (isFocused ? '#c13584' : 'transparent'),
             borderWidth: 2,
             color: '#e2e2e2',
             paddingLeft: 56,
@@ -36,17 +37,23 @@ export default function SignupUsernameInput({ value, onChangeText, isAvailable =
         />
         {value.length > 0 && (
           <View className="absolute right-6 top-0 bottom-0 flex-row items-center gap-xs">
-            <MaterialIcons 
-              name={isAvailable ? "check-circle" : "cancel"} 
-              size={14} 
-              color={isAvailable ? "#22c55e" : "#ef4444"} 
-            />
-            <Text 
-              style={{ fontSize: 10 }}
-              className={`font-bold uppercase ${isAvailable ? 'text-green-500' : 'text-red-500'}`}
-            >
-              {isAvailable ? 'AVAILABLE' : 'TAKEN'}
-            </Text>
+            {isLoading ? (
+              <Text style={{ fontSize: 10 }} className="font-bold text-on-surface-variant uppercase">CHECKING...</Text>
+            ) : (
+              <>
+                <MaterialIcons
+                  name={isAvailable ? "check-circle" : "cancel"}
+                  size={14}
+                  color={isAvailable ? "#22c55e" : "#ef4444"}
+                />
+                <Text
+                  style={{ fontSize: 10 }}
+                  className={`font-bold uppercase ${isAvailable ? 'text-green-500' : 'text-red-500'}`}
+                >
+                  {isAvailable ? 'AVAILABLE' : 'TAKEN'}
+                </Text>
+              </>
+            )}
           </View>
         )}
       </View>

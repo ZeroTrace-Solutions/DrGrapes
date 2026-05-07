@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 
-export default function ProfileHeader({ name, university, level, avatarUrl }) {
+export default function ProfileHeader({ name, username, university, level, avatarUrl }) {
   return (
     <View style={{ 
       backgroundColor: '#1e2020', 
@@ -15,11 +15,15 @@ export default function ProfileHeader({ name, university, level, avatarUrl }) {
       borderColor: 'rgba(255,255,255,0.03)'
     }}>
       <View style={{ position: 'relative' }}>
-         <View style={{ width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: '#c13584', padding: 2 }}>
-            <Image 
-              source={{ uri: avatarUrl || 'https://i.pravatar.cc/150' }} 
-              style={{ width: '100%', height: '100%', borderRadius: 40 }}
-            />
+         <View style={{ width: 80, height: 80, borderRadius: 40, borderWidth: 2, borderColor: '#c13584', padding: 2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+            {avatarUrl ? (
+              <Image 
+                source={{ uri: avatarUrl }} 
+                style={{ width: '100%', height: '100%', borderRadius: 40 }}
+              />
+            ) : (
+              <Ionicons name="person" size={40} color="#dcbfc9" />
+            )}
          </View>
          <View style={{ 
            position: 'absolute', 
@@ -37,8 +41,13 @@ export default function ProfileHeader({ name, university, level, avatarUrl }) {
       </View>
 
       <View style={{ marginLeft: 20, flex: 1 }}>
-         <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white' }}>{name}</Text>
-         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+         <Text style={{ fontSize: 22, fontWeight: 'bold', color: 'white' }}>{name}</Text>
+         {username && (
+           <Text style={{ fontSize: 14, color: '#c13584', fontWeight: 'bold', marginBottom: 6 }}>
+             @{username}
+           </Text>
+         )}
+         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Ionicons name="school-outline" size={14} color="#dcbfc9" />
             <Text style={{ fontSize: 14, color: '#dcbfc9', marginLeft: 6 }}>{university}</Text>
          </View>
