@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Animated, Image, StyleSheet, Text, View } from 'react-native';
+import BrandingFooter from '../components/common/BrandingFooter';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -48,19 +49,7 @@ export default function IntroScreen() {
         </View>
 
         {/* Bottom Branding */}
-        <View style={styles.footer}>
-          <Text style={styles.fromText} className="text-on-surface-variant">from</Text>
-          <View style={styles.brandingRow}>
-            <Image
-              source={require('@/assets/images/zt-solutions-icon.png')}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <Text style={styles.ztText} className="text-on-surface">
-              <Text style={styles.bold}>ZT</Text>Solutions
-            </Text>
-          </View>
-        </View>
+        <BrandingFooter style={{ marginBottom: 60 }} />
       </Animated.View>
     </View>
   );
@@ -86,31 +75,5 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
-  },
-  footer: {
-    marginBottom: 60,
-    alignItems: 'center',
-  },
-  fromText: {
-    fontSize: 14,
-    marginBottom: 8,
-    letterSpacing: 1,
-    textTransform: 'lowercase',
-  },
-  brandingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    marginRight: 8,
-  },
-  ztText: {
-    fontSize: 20,
-    letterSpacing: 0.5,
-  },
-  bold: {
-    fontWeight: 'bold',
   },
 });

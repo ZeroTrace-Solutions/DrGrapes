@@ -15,6 +15,7 @@ import ActivityCard from '../../components/profile/ActivityCard';
 import ProfileHeader from '../../components/profile/ProfileHeader';
 import ProfileRow from '../../components/profile/ProfileRow';
 import SectionTitle from '../../components/profile/SectionTitle';
+import BrandingFooter from '@/components/common/BrandingFooter';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
@@ -96,11 +97,27 @@ export default function ProfileScreen() {
           {/* Information Section */}
           <SectionTitle title="Information" />
           <View style={{ gap: 12, marginBottom: 32 }}>
-            <ProfileRow icon="help-circle-outline" label="Help" color="#dcbfc9" />
-            <ProfileRow icon="information-circle-outline" label="About" color="#dcbfc9" />
-            <ProfileRow icon="shield-checkmark-outline" label="Privacy Center" color="#dcbfc9" isLast />
+            <ProfileRow 
+              icon="help-circle-outline" 
+              label="Help" 
+              color="#dcbfc9" 
+              onPress={() => router.push('/settings?section=support')} 
+            />
+            <ProfileRow 
+              icon="information-circle-outline" 
+              label="About" 
+              color="#dcbfc9" 
+              onPress={() => router.push('/settings?section=legal')} 
+            />
+            <ProfileRow 
+              icon="shield-checkmark-outline" 
+              label="Privacy Center" 
+              color="#dcbfc9" 
+              isLast 
+              onPress={() => router.push('/settings?section=privacy')} 
+            />
           </View>
-
+          <BrandingFooter style={{ marginTop: 20 }} />
         </ScrollView>
       </SafeAreaView>
     </View>
